@@ -1,0 +1,83 @@
+# XcodeGen spec. Generate the project with: cd ios && xcodegen generate
+# The .xcodeproj is generated, never edited by hand.
+#
+# D-001: no push, no App Groups, no entitlements. Signing is disabled here;
+# the CI produces an unsigned IPA and the user signs it (GBox/ESign).
+
+name: CountdownVI
+
+options:
+  bundleIdPrefix: com.countdownvi
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  developmentLanguage: pt-BR
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: ""
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_REQUIRED: "NO"
+
+targets:
+  CountdownVI:
+    type: application
+    platform: iOS
+    sources:
+      - path: CountdownVI
+      - path: Shared
+    dependencies:
+      - target: CountdownVIWidget
+        embed: true
+    info:
+      path: CountdownVI/Info.plist
+      properties:
+        CFBundleDisplayName: Countdown VI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSSupportsLiveActivities: true
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.countdownvi.app
+        PRODUCT_NAME: CountdownVI
+
+  CountdownVIWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CountdownVIWidget
+      - path: Shared
+    info:
+      path: CountdownVIWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Countdown VI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.countdownvi.app.widget
+        PRODUCT_NAME: CountdownVIWidget
+        SKIP_INSTALL: "YES"
+
+schemes:
+  CountdownVI:
+    build:
+      targets:
+        CountdownVI: all
+        CountdownVIWidget: all
+    run:
+      config: Debug
+    archive:
+      config: Release

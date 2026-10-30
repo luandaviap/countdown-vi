@@ -1,0 +1,117 @@
+import SwiftUI
+
+struct CountdownView: View {
+    private static let secondsPerDay: TimeInterval = 86_400
+
+    private let releaseDate = ReleaseConfig.releaseDate
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    /// The opt-in button is shown only while the system prompt has never been answered.
+    @State private var canAskForNotifications = false
+
+    var body: some View {
+        // Text(timerInterval:) ticks the hours/minutes/seconds on its own; the view only
+        // needs to re-render when the day count changes, so the timeline fires at day boundaries.
+        TimelineView(.explicit(dayBoundaries(from: .now))) { context in
+            VStack(spacing: 32) {
+                Text(ReleaseConfig.gameTitle)
+                    .font(.system(.largeTitle, design: .rounded, weight: .heavy))
+                    .accessibilityAddTraits(.isHeader)
+
+                if context.date >= releaseDate {
+                    Text("Disponível agora")
+                        .font(.system(.title, design: .rounded, weight: .bold))
+                } else {
+                    countdown(now: context.date)
+                }
+
+                releaseInfo
+
+                if canAskForNotifications && context.date < releaseDate {
+                    notificationOptInButton
+                }
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black.ignoresSafeArea())
+            .foregroundStyle(.white)
+        }
+        .task {
+            canAskForNotifications = await NotificationScheduler.authorizationStatus() == .notDetermined
+        }
+    }
+
+    private var notificationOptInButton: some View {
+        Button {
+            Task {
+                await NotificationScheduler.requestAuthorizationAndSchedule()
+                canAskForNotifications = false
+            }
+        } label: {
+            Label("Avisar nos marcos", systemImage: "bell.badge")
+                .font(.system(.headline, design: .rounded))
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.white)
+        .foregroundStyle(.black)
+        .accessibilityHint(Text("Receba avisos conforme o lançamento se aproxima"))
+    }
+
+    private func countdown(now: Date) -> some View {
+        let days = wholeDaysRemaining(from: now)
+        let dayBoundary = releaseDate.addingTimeInterval(-Double(days) * Self.secondsPerDay)
+
+        return VStack(spacing: 8) {
+            Text("\(days)")
+                .font(.system(size: dynamicTypeSize.isAccessibilitySize ? 72 : 96, weight: .black, design: .rounded))
+                .monospacedDigit()
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+            Text(days == 1 ? "dia" : "dias")
+                .font(.system(.title3, design: .rounded, weight: .semibold))
+                .foregroundStyle(.secondary)
+
+            Text(timerInterval: now...max(now, dayBoundary), countsDown: true)
+                .font(.system(.largeTitle, design: .rounded, weight: .bold))
+                .monospacedDigit()
+                .multilineTextAlignment(.center)
+                .padding(.top, 8)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text("Faltam \(days) dias para o lançamento"))
+    }
+
+    private var releaseInfo: some View {
+        VStack(spacing: 4) {
+            Text(releaseDate, format: .dateTime.day().month(.wide).year())
+                .font(.headline)
+            if !ReleaseConfig.isDateVerified {
+                Text("Data provisória")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// Days shown next to the timer. Rounds up then subtracts one, so the count drops at the exact
+    /// boundary instant and the timer range is always in (0, 24h], never empty before the release.
+    private func wholeDaysRemaining(from now: Date) -> Int {
+        let remainingDays = releaseDate.timeIntervalSince(now) / Self.secondsPerDay
+        return max(0, Int(remainingDays.rounded(.up)) - 1)
+    }
+
+    /// Now, then the ascending instants at which the day count drops (releaseDate - k days for
+    /// k = days...1), ending at the release itself.
+    private func dayBoundaries(from now: Date) -> [Date] {
+        let days = wholeDaysRemaining(from: now)
+        return [now] + stride(from: days, through: 0, by: -1).map {
+            releaseDate.addingTimeInterval(-Double($0) * Self.secondsPerDay)
+        }
+    }
+}
+
+#Preview {
+    CountdownView()
+        .preferredColorScheme(.dark)
+}
