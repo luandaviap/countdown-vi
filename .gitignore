@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.xcodeproj
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Signing (nunca commitar)
+*.p12
+*.cer
+*.mobileprovision
+*.certSigningRequest
+
+# Segredos / ambiente
+.env
+.env.*
+.dev.vars
+
+# Node / Worker
+node_modules/
+.wrangler/
+
+# Artefatos
+*.ipa
+*.xcarchive
+
+# Maestri
+.maestri/
