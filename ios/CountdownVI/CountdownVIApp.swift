@@ -1,8 +1,13 @@
 import SwiftUI
+import UserNotifications
 
 @main
 struct CountdownVIApp: App {
     @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        UNUserNotificationCenter.current().delegate = ForegroundNotificationPresenter.shared
+    }
 
     var body: some Scene {
         WindowGroup {

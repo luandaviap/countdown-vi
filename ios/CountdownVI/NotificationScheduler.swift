@@ -2,6 +2,19 @@ import Foundation
 import OSLog
 import UserNotifications
 
+/// Shows milestone banners while the app is in the foreground (iOS hides them by default).
+/// The notification center keeps only a weak reference, hence the shared instance.
+final class ForegroundNotificationPresenter: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = ForegroundNotificationPresenter()
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .list, .sound]
+    }
+}
+
 /// Schedules the release milestones as local notifications (D-001: no remote push).
 @MainActor
 enum NotificationScheduler {
