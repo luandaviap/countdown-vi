@@ -5,7 +5,6 @@ import UserNotifications
 struct CountdownView: View {
     private let releaseDate = ReleaseConfig.releaseDate
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
@@ -13,33 +12,18 @@ struct CountdownView: View {
     /// Drives the opt-in button (never asked) and the Settings shortcut (denied).
     @State private var notificationStatus: UNAuthorizationStatus?
 
+    /// Scales the day number with Dynamic Type; minimumScaleFactor keeps it on one line.
+    @ScaledMetric(relativeTo: .largeTitle) private var dayNumberSize: CGFloat = 96
+
     var body: some View {
         // Days and clock come from the same whole-second count, so they can never disagree
         // and the clock never shows 24:00:00. Ticks are anchored to whole seconds before the release.
         TimelineView(.periodic(from: tickAnchor(now: .now), by: 1)) { context in
-            VStack(spacing: 32) {
-                Text(ReleaseConfig.gameTitle)
-                    .font(.system(.largeTitle, design: .rounded, weight: .heavy))
-                    .accessibilityAddTraits(.isHeader)
-
-                if context.date >= releaseDate {
-                    Text("Disponível agora")
-                        .font(.system(.title, design: .rounded, weight: .bold))
-                } else {
-                    countdown(now: context.date)
-                }
-
-                releaseInfo
-
-                if context.date < releaseDate {
-                    switch notificationStatus {
-                    case .notDetermined: notificationOptInButton
-                    case .denied: notificationSettingsShortcut
-                    default: EmptyView()
-                    }
-                }
+            // Centered when it fits; scrolls at the largest accessibility text sizes.
+            ViewThatFits(in: .vertical) {
+                content(at: context.date)
+                ScrollView { content(at: context.date) }
             }
-            .padding(24)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black.ignoresSafeArea())
             .foregroundStyle(.white)
@@ -49,6 +33,33 @@ struct CountdownView: View {
             guard scenePhase == .active else { return }
             notificationStatus = await NotificationScheduler.authorizationStatus()
         }
+    }
+
+    private func content(at date: Date) -> some View {
+        VStack(spacing: 32) {
+            Text(ReleaseConfig.gameTitle)
+                .font(.system(.largeTitle, design: .rounded, weight: .heavy))
+                .accessibilityAddTraits(.isHeader)
+
+            if date >= releaseDate {
+                Text("Disponível agora")
+                    .font(.system(.title, design: .rounded, weight: .bold))
+            } else {
+                countdown(now: date)
+            }
+
+            releaseInfo
+
+            if date < releaseDate {
+                switch notificationStatus {
+                case .notDetermined: notificationOptInButton
+                case .denied: notificationSettingsShortcut
+                default: EmptyView()
+                }
+            }
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity)
     }
 
     private var notificationOptInButton: some View {
@@ -87,7 +98,7 @@ struct CountdownView: View {
 
         return VStack(spacing: 8) {
             Text("\(timeLeft.days)")
-                .font(.system(size: dynamicTypeSize.isAccessibilitySize ? 72 : 96, weight: .black, design: .rounded))
+                .font(.system(size: dayNumberSize, weight: .black, design: .rounded))
                 .monospacedDigit()
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
@@ -103,8 +114,9 @@ struct CountdownView: View {
                 .padding(.top, 8)
         }
         .animation(reduceMotion ? nil : .snappy, value: timeLeft)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Faltam \(timeLeft.days) dias para o lançamento"))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(timeLeft.spokenDescription))
+        .accessibilityAddTraits(.updatesFrequently)
     }
 
     private var releaseInfo: some View {
@@ -136,6 +148,18 @@ private struct TimeLeft: Equatable {
     var seconds: Int { totalSeconds % 60 }
 
     var clock: String { String(format: "%02d:%02d:%02d", hours, minutes, seconds) }
+
+    /// VoiceOver text. Seconds are left out so the label does not churn every tick.
+    var spokenDescription: String {
+        let daysText = Self.plural(days, "dia", "dias")
+        let hoursText = Self.plural(hours, "hora", "horas")
+        let minutesText = Self.plural(minutes, "minuto", "minutos")
+        return "Faltam \(daysText), \(hoursText) e \(minutesText) para o lançamento"
+    }
+
+    private static func plural(_ count: Int, _ singular: String, _ plural: String) -> String {
+        "\(count) \(count == 1 ? singular : plural)"
+    }
 }
 
 #Preview {
