@@ -212,8 +212,6 @@ struct CountdownWidgetView: View {
     }
 }
 
-#Preview(as: .systemSmall) {
-    CountdownWidget()
-} timeline: {
-    CountdownEntry(date: .now)
-}
+// No #Preview here on purpose: the WidgetKit preview macro compiles an async timeline closure into
+// the Release binary, which made the extension link libswift_Concurrency (T-027b). Keep the
+// extension free of async code unless it is needed at runtime.
