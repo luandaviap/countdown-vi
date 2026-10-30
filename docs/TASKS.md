@@ -42,6 +42,10 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 | T-021 | App busca a data do Worker com fallback local (`ReleaseConfig`) | frontend | todo |
 | T-022 | Deploy do Worker via Actions | devops | todo |
 
+## Bloqueio atual (2026-10-30)
+- **Regressão no aparelho:** o usuário relatou que, no build 15, nem o widget nem a Live Activity funcionaram (no build 10 a Live Activity aparecia). Comparei os IPAs 10, 13 e 15: arquivos, Info.plist do app e da extensão, arquitetura (arm64) e iOS mínimo são idênticos; a extensão cresceu de 95 KB (10) para 170 KB (13) e 171 KB (15). Causa desconhecida.
+- Plano: (1) bisseção pelo usuário com `build/CountdownVI-unsigned-build-10.ipa`, `-13.ipa` e `-15.ipa` (instalar apagando o app antes); (2) T-027 com o Prisma: revisão estática e uma linha de diagnóstico temporária na home com o erro exato da Live Activity; (3) perguntas ao usuário: se o app abre, se o botão "Ativar Live Activity" aparece, se o assinador mostrou erro e se instalou por cima ou limpo.
+
 ## Pendências com o usuário
 - [ ] Data oficial e fuso: seguem provisórios (2026-11-19 00:00 EST, NÃO verificado; `isDateVerified = false`; a tela mostra "Data provisória"). O usuário decidiu deixar assim por enquanto, e depois quer um servidor que entregue a data/hora conforme a região da pessoa (T-020/T-021). Só mudar com confirmação explícita.
 - [x] Direção de design v2, fundo gerado por IA e as 3 propostas: aprovados (leitura minha de "Decisão aprovada"; o usuário pode corrigir). Ver D-015.
