@@ -8,7 +8,9 @@ struct CountdownActivityAttributes: ActivityAttributes {
         var releaseDate: Date
         /// Fixed "N dias" label (D-016). Only true until `nextDayBoundary`, which the app passes as
         /// the content's staleDate; the views hide it once `context.isStale`.
-        var days: Int
+        /// Optional so content written by older builds (no `days` key) still decodes; views treat
+        /// nil like stale. New fields here must stay optional for the same reason.
+        var days: Int?
     }
 
     var title: String
@@ -23,8 +25,8 @@ extension CountdownActivityAttributes.ContentState {
         self.init(releaseDate: releaseDate, days: max(0, Int(remainingDays.rounded(.up)) - 1))
     }
 
-    /// The instant at which `days` stops being correct.
+    /// The instant at which `days` stops being correct (the release itself when unknown).
     var nextDayBoundary: Date {
-        releaseDate.addingTimeInterval(-Double(days) * Self.secondsPerDay)
+        releaseDate.addingTimeInterval(-Double(days ?? 0) * Self.secondsPerDay)
     }
 }

@@ -25,8 +25,8 @@ struct CountdownLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     HStack(alignment: .firstTextBaseline) {
-                        if !context.isStale {
-                            DaysLabel(days: context.state.days)
+                        if let days = context.state.days, !context.isStale {
+                            DaysLabel(days: days)
                                 .font(.system(.title3, design: .rounded, weight: .semibold))
                         }
                         Spacer()
@@ -40,19 +40,19 @@ struct CountdownLiveActivity: Widget {
                 Image(systemName: "sun.horizon.fill")
                     .foregroundStyle(.orange)
             } compactTrailing: {
-                if context.isStale {
-                    // Fixed "Nd" is no longer true: fall back to the self-updating timer.
+                if let days = context.state.days, !context.isStale {
+                    Text(verbatim: "\(days)d")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .monospacedDigit()
+                        .accessibilityLabel(Text(DaysLabel.text(for: days)))
+                } else {
+                    // Fixed "Nd" is no longer true (or unknown): fall back to the self-updating timer.
                     // Timer text reserves its widest layout by default; above 24h it shows total
                     // hours ("480:12:03", 9 glyphs), so pin a width that fits that at caption2.
                     CountdownTimerText(releaseDate: context.state.releaseDate)
                         .font(.system(.caption2, design: .rounded, weight: .semibold))
                         .multilineTextAlignment(.trailing)
                         .frame(width: 56, alignment: .trailing)
-                } else {
-                    Text(verbatim: "\(context.state.days)d")
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .monospacedDigit()
-                        .accessibilityLabel(Text(DaysLabel.text(for: context.state.days)))
                 }
             } minimal: {
                 Image(systemName: "sun.horizon.fill")
@@ -79,8 +79,8 @@ private struct LockScreenCountdownView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
-                    if !isStale {
-                        DaysLabel(days: state.days)
+                    if let days = state.days, !isStale {
+                        DaysLabel(days: days)
                             .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     }
                     CountdownTimerText(releaseDate: state.releaseDate)
