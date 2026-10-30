@@ -35,8 +35,9 @@
 
 Most countdown applications rely on remote push notifications, background workers, or App Groups to sync widgets with an app. This project deliberately avoids those dependencies to comply with on-device signing constraints (**Decision D-001**):
 
-1. **Native System Timers (`Text(timerInterval:countsDown:)`):**
-   The system updates the countdown text automatically, without timer threads or active background app processes.
+1. **Two Countdown Mechanisms (Decision D-010):**
+   - **In-app screen:** recalculates every second with a periodic `TimelineView`, deriving days and the clock from a single total of whole seconds, so the two can never diverge.
+   - **Live Activity (and the future widget):** uses `Text(timerInterval:countsDown:)`, because the system updates it automatically without the app running.
 2. **Local ActivityKit (`pushType: nil`):**
    The Live Activity is requested locally by the application using `Activity.request(attributes:content:pushType: nil)`. It requires no Apple Push Notification service (APNs) keys or remote server tokens.
 3. **Local Notifications (`UserNotifications`):**

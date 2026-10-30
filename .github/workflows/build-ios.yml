@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Select Xcode Version
         run: |
@@ -87,7 +87,7 @@ jobs:
           ls -lh build/CountdownVI-unsigned.ipa
 
       - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: CountdownVI-unsigned-build-${{ github.run_number }}
           path: build/CountdownVI-unsigned.ipa
@@ -96,7 +96,7 @@ jobs:
 
       - name: Publish GitHub Release Asset
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.3
         with:
           files: build/CountdownVI-unsigned.ipa
           generate_release_notes: true
