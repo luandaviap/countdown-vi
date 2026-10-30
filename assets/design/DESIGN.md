@@ -30,12 +30,18 @@ Somente fonte de sistema iOS: `.system` com `.rounded` ou largura `.condensed` q
 
 Use `LinearGradient(stops:)` vertical com paradas 0 `#24104C`, 0.55 `#ED286B`, 1 `#FF8A4C`; botão com gradiente horizontal rosa/laranja. `Material.ultraThin` em `RoundedRectangle` com camada de cor e borda translúcida aproxima o vidro; material não garante um raio de blur fixo e depende do contexto. Respeitar Reduce Transparency, Dynamic Type e áreas seguras; medir legibilidade no aparelho. Usar o fundo retrato recomendado preservando proporção; usar a cena vetorial como fallback.
 
+## Layout de referência: 393 × 852 pt
+
+Origem no canto superior esquerdo da tela; dimensões aproximadas, ajustar safe areas e Dynamic Type. Título centrado em y=99 pt; subtítulo y=128 pt; cartões de x=22 a 371 pt, y=158 a 259 pt, com quatro colunas e espaço de 8 pt. Barra em y=276 pt; data y=309 pt; linha provisória y=331 pt. Área de arte livre no meio. Scrim escuro em x=20 a 373 pt e y=684 a 819 pt; botão principal x=62 a 331 pt, y=701 a 747 pt; secundário x=62 a 331 pt, y=760 a 804 pt. O scrim é preto arroxeado a 86%; os botões ficam sobre a água e fora do sol e das palmeiras. Texto do botão principal `#100A1C` sobre o gradiente claro; texto do secundário `#FFFFFF` sobre `#181021`. Contrastes calculados no gradiente do botão, sem antialiasing: mínimo superior a 4,5:1; confirmar com o material e cores finais no aparelho.
+
+`palm-glyph.svg` tem viewBox 24 × 24 e um caminho preenchido com `currentColor`; converter para um recurso vetorial compatível com o Xcode. A ilustração na Dynamic Island é uma representação aproximada do glifo.
+
 ## Anatomia
 
-- **Home:** título GTA VI, Countdown VI, quatro blocos (dias, horas, minutos, segundos), data e Data provisória, botões e cena inferior. **PROPOSTA:** barra limitada aos últimos 30 dias; fração `clamp(1 - segundosRestantes / (30 * 86400), 0, 1)`. **PROPOSTA:** botão Ativar Live Activity quando não houver activity ativa.
-- **Live Activity na Lock Screen:** título e data; timer automaticamente atualizado, com data provisória, sobre fundo escuro. Layout sujeito ao sistema.
-- **Dynamic Island compacta:** símbolo de palmeira abstrato e **PROPOSTA** `19d` estático, calculado ao criar/atualizar activity; não é timer automático e pode ficar defasado.
-- **Expandida:** título, data abreviada, timer e indicação provisória quando houver espaço. **Mínima:** glifo de palmeira proposto. O sistema determina dimensões e composição.
+- **Home:** título Esperando por Leonida, subtítulo Dias para viajar para Leonida, quatro blocos (dias, horas, minutos, segundos), data e Data provisória, botões e cena inferior. **PROPOSTA:** barra limitada aos últimos 30 dias; fração `clamp(1 - segundosRestantes / (30 * 86400), 0, 1)`. **PROPOSTA:** botão Ativar Live Activity quando não houver activity ativa.
+- **Live Activity na Lock Screen:** título e data; rótulo fixo N dias e timer automaticamente atualizado, com data provisória, sobre fundo escuro. Ao ficar stale, ocultar o rótulo de dias e manter o timer. D-016 também prevê um experimento temporário com `Text(releaseDate, style: .relative)`, cuja apresentação depende de validação em aparelho; ele não está ilustrado aqui. Layout sujeito ao sistema.
+- **Dynamic Island compacta:** símbolo de palmeira abstrato e **PROPOSTA** `19d` estático, calculado ao criar/atualizar activity; não é timer automático e desaparece quando a activity fica stale.
+- **Expandida:** título, data abreviada, rótulo fixo de dias, timer e indicação provisória quando houver espaço. **Mínima:** glifo de palmeira proposto. O sistema determina dimensões e composição.
 - **Widget comum:** small com título, dias e data provisória; medium acrescenta relógio; acessório retangular da Lock Screen usa título, dias e relógio monocromáticos. Widget e renderização efetiva dependem do iOS.
 
 ## Cena
