@@ -56,9 +56,9 @@ Regra: cada agente só edita a própria pasta. Se precisar de mudança fora dela
 
 ## Fluxo de trabalho
 1. O usuário fala com o orquestrador. Ele registra a tarefa em `docs/TASKS.md` e delega ao agente dono.
-2. O agente trabalha em branch `feature/<area>-<resumo>` (ex.: `feature/ios-live-activity`).
-3. Ao terminar, entrega no formato de handoff abaixo.
-4. O orquestrador revisa, atualiza `docs/TASKS.md` e `docs/DECISIONS.md`, e libera o merge.
+2. O agente trabalha direto na `main` (decisão D-007: projeto simples, sem branches nem PRs).
+3. Ao terminar, commita só os próprios arquivos e entrega no formato de handoff abaixo.
+4. O orquestrador revisa, atualiza `docs/TASKS.md` e `docs/DECISIONS.md`.
 
 ### Formato de handoff (obrigatório ao entregar)
 - **Feito:** o que mudou, em poucas linhas.
@@ -67,9 +67,10 @@ Regra: cada agente só edita a própria pasta. Se precisar de mudança fora dela
 - **Pendências/riscos:** o que ficou de fora ou precisa de aparelho real.
 
 ## Git
-- `main` sempre estável; nada vai direto para `main`, só por PR.
-- Commits no padrão Conventional Commits: `feat:`, `fix:`, `chore:`, `ci:`, `docs:`, `refactor:`.
-- Um assunto por PR. PR pequeno, descrição curta com o handoff.
+- Commit e push direto na `main` (D-007). Sem branches de feature, sem worktrees, sem PR e sem proteção de branch.
+- Todos dividem a mesma pasta de trabalho: commitar com `git add` de caminhos explícitos da própria pasta (nunca `git add .` nem `git add -A`), e não reescrever histórico (sem `rebase`, `reset --hard` nem `push --force`).
+- Commits no padrão Conventional Commits: `feat:`, `fix:`, `chore:`, `ci:`, `docs:`, `refactor:`. Um assunto por commit.
+- Só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`.
 
 ## Regras gerais
 - Nunca commitar segredos, certificados (`.p12`, `.mobileprovision`) ou chaves.

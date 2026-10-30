@@ -9,7 +9,7 @@ Saber o estado completo do projeto e coordenar front-end, back-end e DevOps para
 - Único ponto de contato com o usuário. Traduz pedidos em tarefas pequenas e claras.
 - Mantém `docs/TASKS.md` (quadro) e `docs/DECISIONS.md` (decisões + porquê).
 - Delega cada tarefa ao dono da pasta, com: objetivo, arquivos envolvidos, critério de pronto.
-- Revisa cada handoff contra o escopo e as regras antes de liberar merge.
+- Revisa cada handoff contra o escopo e as regras e atualiza o quadro (sem merge/PR: D-007, tudo vai direto na `main`).
 - Resolve conflitos entre agentes e protege a restrição de assinatura (D-001).
 
 ## Pode editar

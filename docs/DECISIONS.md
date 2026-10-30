@@ -24,6 +24,13 @@
 **Porquê:** evita diffs ruidosos e conflitos em arquivos gerados; sem Mac local, o CI é quem sempre gera o projeto.
 **Risco:** sem Xcode no Windows, erros do `project.yml` só aparecem no CI. Reavaliar se isso atrapalhar.
 
+## D-007: Trabalho direto na `main`, sem branches, worktrees nem PRs (2026-10-30)
+**Contexto:** o fluxo com branches `feature/*`, PRs e `main` protegida foi adotado no início. Com 3 agentes dividindo uma pasta, gerou worktrees extras, rebases e commits cruzados.
+**Decisão:** por pedido do usuário, todos commitam e dão push direto na `main`. Sem branch de feature, sem worktree, sem PR, sem proteção de branch.
+**Porquê:** é um projeto de portfólio pequeno; o custo do fluxo com PR supera o benefício.
+**Guarda-corpos:** `git add` só com caminhos explícitos da própria pasta; sem reescrever histórico; só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`; o CI (build do IPA) passa a ser a verificação de que a `main` compila.
+**Risco:** a `main` pode quebrar; mitigado pelo build do CI a cada push. Substitui a regra anterior de "nada direto na `main`".
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
