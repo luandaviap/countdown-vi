@@ -6,7 +6,11 @@ xcuserdata/
 DerivedData/
 build/
 *.xcuserstate
-*.xcodeproj
+
+# XcodeGen (D-005)
+ios/*.xcodeproj
+ios/CountdownVI/Info.plist
+ios/CountdownVIWidget/Info.plist
 
 # Swift Package Manager
 .build/
