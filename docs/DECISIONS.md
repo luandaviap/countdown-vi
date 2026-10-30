@@ -31,6 +31,12 @@
 **Guarda-corpos:** `git add` só com caminhos explícitos da própria pasta; sem reescrever histórico; só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`; o CI (build do IPA) passa a ser a verificação de que a `main` compila.
 **Risco:** a `main` pode quebrar; mitigado pelo build do CI a cada push. Substitui a regra anterior de "nada direto na `main`".
 
+## D-008: Repositório GitHub público, com README de portfólio (2026-10-30)
+**Contexto:** o Trilho criou `luandaviap/countdown-vi` como público por instrução minha, antes de eu ter perguntado ao usuário. O usuário então confirmou.
+**Decisão:** o repositório fica **público** (nome `countdown-vi`), porque o projeto é peça de portfólio. O `README.md` é entregável de primeira classe: bonito, com screenshots e GIF do app.
+**Porquê:** o valor do projeto é ser visto. Como o repo é público, nunca vão segredos, certificados nem IPAs assinados para ele (ver `.gitignore`).
+**Regras do README:** não inventar fatos nem imagens. Screenshots só de execução real (simulador ou aparelho); até existirem, usar placeholders claramente marcados. Não afirmar que o build ou a Live Activity funcionam enquanto o CI e o aparelho não confirmarem. Mostrar a data como provisória enquanto `isDateVerified = false` (D-004).
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
