@@ -13,6 +13,7 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 | T-004 | Fluxo "baixar IPA do Actions e assinar no GBox/ESign" | devops | doing (vira seção do README, T-007) |
 | T-005 | `.gitignore`: ignorar os `Info.plist` gerados pelo xcodegen (D-005) | devops | done (conferido com `git check-ignore`) |
 | T-006 | `.gitattributes` com `eol=lf` (aviso de CRLF no Windows) | devops | done (`eb5ae99`) |
+| T-009 | Mockup fiel do app como está hoje (home, Lock Screen, Dynamic Island) em `assets/mockups/`, para o usuário avaliar e começar a trabalhar no design | arte (Matiz) | doing |
 | T-007 | `README.md` de portfólio: bonito, com banner, badge do build, stack, como gerar e assinar o IPA, limitações reais (D-008) | devops | review (publicado em `3182879`; 8 correções de precisão pedidas ao Trilho; screenshots reais só depois do teste em aparelho) |
 | T-008 | Identidade visual: wordmark, ícone 1024x1024, banner e paleta em `assets/` (D-009) | arte (Matiz) | done (commits `77f7b31` e `d2239d2`, acentos corrigidos e conferidos) |
 
