@@ -9,7 +9,7 @@ Cada imagem é um mockup de proposta de design, renderizado, não é screenshot.
 - `mockup-overview.png`: as quatro superfícies lado a lado.
 - `mockup-hero.png`: home em moldura para o README.
 
-Fonte renderizada: Trebuchet MS regular e bold, aproximação no Windows; o app deve usar fonte do sistema iOS, conforme DESIGN.md. A home usa estudo de cena gerado por IA; não é imagem do app em execução.
+Fonte renderizada: Trebuchet MS regular e bold, aproximação no Windows; o app deve usar fonte do sistema iOS, conforme DESIGN.md. A home e o hero usam o fundo retrato gerado por IA e composto com degradê; não são imagens do app em execução. Proveniência em `../../design/PROVENANCE.md`.
 
 Contagem congelada em 30/10/2026 às 13:37:19 UTC-03 (16:37:19 UTC): 19 dias 12:22:41; timer 468:22:41. A data configurada é provisória, 19/11/2026 às 05:00 UTC.
 
