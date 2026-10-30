@@ -50,6 +50,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.countdownvi.app
         PRODUCT_NAME: CountdownVI
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   CountdownVIWidget:
     type: app-extension
