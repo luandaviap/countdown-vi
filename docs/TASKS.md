@@ -36,6 +36,9 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 ## Propostas (aguardam decisão do usuário)
 - Widget comum (Home Screen / Lock Screen) com `Text(timerInterval:)`: não expira como a Live Activity (D-006), não precisa de App Group nem push (a data vem do `ReleaseConfig`, compilado nos dois targets). Fora do escopo atual do AGENTS.md; só entra se o usuário aprovar.
 
+## Bloqueios
+- O Trilho (DevOps, Antigravity/Gemini) esgotou a cota do plano ("Individual quota reached", reset em ~7 dias, visto em 2026-10-30). Ficaram pendentes: corrigir a linha 38 do README (timer: hoje só a Live Activity usa `Text(timerInterval:)`, a tela recalcula por segundo, D-010) e checar actions em Node 24 (`checkout@v4`, `upload-artifact@v4`). Proposta ao usuário: a Forja (Codex, ociosa) assume `.github/` e `README.md` temporariamente; aguardando a resposta.
+
 ## Pendências com o usuário
 - [ ] Confirmar a data oficial de lançamento e o fuso/horário de referência (hoje: 2026-11-19 00:00 EST, NÃO verificado; `ReleaseConfig.isDateVerified = false`). Ver D-004.
 - [ ] Baixar o IPA (artifact do GitHub Actions), assinar no GBox/ESign e testar no iPhone; mandar prints/GIF para o README (itens em "Validar no aparelho").
