@@ -27,8 +27,11 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 | T-013 | Polimento visual, acessibilidade, ícone, banner em primeiro plano, atalho para Ajustes | frontend | done |
 | T-014 | Build a cada push na `main` como verificação (sem PR, D-007) | devops | done |
 | T-016 | Widget comum (Home Screen + Lock Screen) que não expira, com entradas por dia e `Text(timerInterval:)` (D-013) | frontend (Prisma) | done (`0e8ee9c`; li o código e conferi o IPA do build 13; aparelho pendente) |
-| T-017 | Design v2 a partir da referência do usuário (`docs/design/reference-sunset-countdown.png`): tokens, cena em vetor, mockups rotulados de home, Lock Screen, Dynamic Island e widget (D-012) | arte (Matiz) | review (v2.1 em `8a1296e`, local, revisada por mim; aguarda a aprovação do usuário para liberar a T-018) |
-| T-018 | Implementar o design v2 no app, Live Activity e widget | frontend | todo (só depois de o usuário aprovar os mockups da T-017) |
+| T-017 | Design v2 a partir da referência do usuário (`docs/design/reference-sunset-countdown.png`): tokens, cena em vetor, mockups rotulados de home, Lock Screen, Dynamic Island e widget (D-012) | arte (Matiz) | done (v2.1 em `8a1296e`; direção aprovada pelo usuário, D-015) |
+| T-025 | Mockups v2.2: copy "Esperando por Leonida", botões fora do sol/palmeiras (contraste), Lock Screen e Dynamic Island com o fundo do pôr do sol, Live Activity com "N dias" e estado vencido, e glifo de palmeira em `assets/design/palm-glyph.svg` | arte (Matiz) | doing |
+| T-018 | Implementar o design v2 na tela principal: fundo `bg-sunset-portrait.png`, tokens, blocos de vidro, barra de 30 dias, botão "Ativar Live Activity", copy "Esperando por Leonida" (D-012, D-015) | frontend (Prisma) | doing |
+| T-023 | Live Activity: rótulo "N dias" com `staleDate` e experimento `.relative` (D-016) | frontend (Prisma) | doing (depois da T-018) |
+| T-024 | Restilizar a Live Activity (glifo de palmeira) e o widget no design v2 | frontend | todo (depois da T-018, T-023 e da T-025) |
 | T-019 | README: trocar "Screenshots coming soon" por mockups rotulados (hero + telas) (D-011) | devops | todo (depois da T-017) |
 
 ## Fase 2: Servidor (decisão do usuário: "logo mais")
@@ -40,9 +43,9 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 
 ## Pendências com o usuário
 - [ ] Data oficial e fuso: seguem provisórios (2026-11-19 00:00 EST, NÃO verificado; `isDateVerified = false`; a tela mostra "Data provisória"). O usuário decidiu deixar assim por enquanto, e depois quer um servidor que entregue a data/hora conforme a região da pessoa (T-020/T-021). Só mudar com confirmação explícita.
-- [ ] Aprovar a direção e os mockups da T-017 antes de a T-018 começar.
-- [ ] Perguntas de design em aberto: (a) nome na tela: a referência usa "LEONIDA COUNTDOWN", mas Leonida é o estado fictício do jogo (marca da Rockstar); proposta: "GTA VI" e "Countdown VI" como no app; (b) a barra de progresso precisa de um período: proposta, últimos 30 dias até o lançamento (sem depender de data de anúncio); (c) botão "Ativar Live Activity": proposta, mostrar quando não há activity ativa (ajuda após o limite de ~8h, D-006).
-- [ ] Live Activity com dias (pergunta do usuário): `Text(timerInterval:)` só mostra horas totais (ex.: 468:33:19). Proposta: manter o timer de horas totais (sempre correto) e acrescentar um rótulo estático "N dias" calculado ao criar/atualizar a activity, com `staleDate` na próxima virada de dia; quando `context.isStale`, esconder o rótulo e mostrar só as horas (nunca exibe dia errado). Experimento opcional: `Text(releaseDate, style: .relative)`, que se atualiza sozinho e pode mostrar dias, mas o formato exato não dá para conferir sem aparelho. Entra na T-018 (design v2) salvo o usuário pedir antes.
+- [x] Direção de design v2, fundo gerado por IA e as 3 propostas: aprovados (leitura minha de "Decisão aprovada"; o usuário pode corrigir). Ver D-015.
+- [x] Nome na tela: o usuário quer o tema Leonida ("Esperando por Leonida" / "Dias para viajar para Leonida"), apesar do aviso sobre a marca. Decisão dele (D-015).
+- [x] Live Activity com dias: opções 1 e 2 aprovadas (D-016, T-023). Descrição original: `Text(timerInterval:)` só mostra horas totais (ex.: 468:33:19). Proposta: manter o timer de horas totais (sempre correto) e acrescentar um rótulo estático "N dias" calculado ao criar/atualizar a activity, com `staleDate` na próxima virada de dia; quando `context.isStale`, esconder o rótulo e mostrar só as horas (nunca exibe dia errado). Experimento opcional: `Text(releaseDate, style: .relative)`, que se atualiza sozinho e pode mostrar dias, mas o formato exato não dá para conferir sem aparelho. Entra na T-018 (design v2) salvo o usuário pedir antes.
 - [x] Licença: MIT em nome de "Luan" mantida (decisão do usuário).
 - [x] Widget comum que não expira: aprovado (D-013).
 - [x] Troca do Trilho para o Sonnet 5.5: feita.

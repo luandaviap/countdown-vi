@@ -72,6 +72,17 @@
 **Decisão:** por enquanto a data segue provisória e local (D-004). Antes de a Forja começar, preciso do usuário: fonte oficial da data, conta Cloudflare para o deploy e a regra por região (um instante único ou horário local de cada região).
 **Porquê:** sem a data oficial o servidor só serviria o mesmo valor não verificado. A D-001 não impede: buscar JSON por HTTP não exige entitlement.
 
+## D-015: Texto da tela com tema "Leonida", por decisão do usuário (2026-10-30)
+**Contexto:** a referência de design usava "LEONIDA COUNTDOWN". Avisei que Leonida é o estado fictício do jogo, ligado à marca da Rockstar. O usuário decidiu usar o tema mesmo assim, com frases como "Esperando por Leonida" e "Dias para viajar para Leonida". O usuário também aprovou (por leitura minha de "Decisão aprovada") a direção de design v2, o fundo gerado por IA e as 3 propostas (barra de 30 dias, botão "Ativar Live Activity", "19d" fixo na ilha compacta).
+**Decisão:** título da tela "Esperando por Leonida" e linha secundária "Dias para viajar para Leonida"; Live Activity e widgets seguem com "GTA VI" nas superfícies curtas. Todo o texto de interface fica concentrado em um único lugar no código, para trocar fácil.
+**Guarda-corpos:** só referência em texto; nenhum logotipo, arte, personagem ou material oficial da Rockstar/GTA; o aviso de projeto de fã sem afiliação continua no README; arte original (D-009). O risco de marca é do usuário; o repositório é público (D-008).
+
+## D-016: Live Activity mostra dias (opção 1) e testa texto relativo (opção 2) (2026-10-30)
+**Contexto:** `Text(timerInterval:)` só mostra horas totais (ex.: 468:33:19). O usuário aprovou as opções 1 e 2.
+**Decisão:** (1) manter o timer de horas totais e acrescentar um rótulo fixo "N dias", calculado ao criar/atualizar a activity, com `staleDate` na próxima virada de dia; quando `context.isStale`, o rótulo some e fica só o timer (nunca exibe dia errado); o app recria o rótulo ao abrir. Compacta da ilha: ícone de palmeira e "Nd" fixo, com a mesma regra. (2) Experimento: uma linha extra com `Text(releaseDate, style: .relative)`, marcada como temporária no código, para ver no aparelho se o iOS mostra dias sozinho.
+**Porquê:** sem push (D-001), nada reescreve um valor fixo em segundo plano; `staleDate` garante que o fixo nunca fique errado. A vida da activity (~8h, D-006) limita o pior caso a uma virada.
+**Risco:** o formato do texto relativo (idioma, unidades, arredondamento) só se vê no aparelho; se não servir, remover o experimento.
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
