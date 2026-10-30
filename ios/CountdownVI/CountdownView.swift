@@ -3,11 +3,10 @@ import UIKit
 import UserNotifications
 
 struct CountdownView: View {
-    private static let secondsPerDay: TimeInterval = 86_400
-
     private let releaseDate = ReleaseConfig.releaseDate
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.openURL) private var openURL
 
@@ -15,9 +14,9 @@ struct CountdownView: View {
     @State private var notificationStatus: UNAuthorizationStatus?
 
     var body: some View {
-        // Text(timerInterval:) ticks the hours/minutes/seconds on its own; the view only
-        // needs to re-render when the day count changes, so the timeline fires at day boundaries.
-        TimelineView(.explicit(dayBoundaries(from: .now))) { context in
+        // Days and clock come from the same whole-second count, so they can never disagree
+        // and the clock never shows 24:00:00. Ticks are anchored to whole seconds before the release.
+        TimelineView(.periodic(from: tickAnchor(now: .now), by: 1)) { context in
             VStack(spacing: 32) {
                 Text(ReleaseConfig.gameTitle)
                     .font(.system(.largeTitle, design: .rounded, weight: .heavy))
@@ -84,27 +83,28 @@ struct CountdownView: View {
     }
 
     private func countdown(now: Date) -> some View {
-        let days = wholeDaysRemaining(from: now)
-        let dayBoundary = releaseDate.addingTimeInterval(-Double(days) * Self.secondsPerDay)
+        let timeLeft = TimeLeft(totalSeconds: Int(releaseDate.timeIntervalSince(now).rounded()))
 
         return VStack(spacing: 8) {
-            Text("\(days)")
+            Text("\(timeLeft.days)")
                 .font(.system(size: dynamicTypeSize.isAccessibilitySize ? 72 : 96, weight: .black, design: .rounded))
                 .monospacedDigit()
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
-            Text(days == 1 ? "dia" : "dias")
+                .contentTransition(.numericText(countsDown: true))
+            Text(timeLeft.days == 1 ? "dia" : "dias")
                 .font(.system(.title3, design: .rounded, weight: .semibold))
                 .foregroundStyle(.secondary)
 
-            Text(timerInterval: now...max(now, dayBoundary), countsDown: true)
+            Text(verbatim: timeLeft.clock)
                 .font(.system(.largeTitle, design: .rounded, weight: .bold))
                 .monospacedDigit()
-                .multilineTextAlignment(.center)
+                .contentTransition(.numericText(countsDown: true))
                 .padding(.top, 8)
         }
+        .animation(reduceMotion ? nil : .snappy, value: timeLeft)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("Faltam \(days) dias para o lançamento"))
+        .accessibilityLabel(Text("Faltam \(timeLeft.days) dias para o lançamento"))
     }
 
     private var releaseInfo: some View {
@@ -119,21 +119,23 @@ struct CountdownView: View {
         }
     }
 
-    /// Days shown next to the timer. Rounds up then subtracts one, so the count drops at the exact
-    /// boundary instant and the timer range is always in (0, 24h], never empty before the release.
-    private func wholeDaysRemaining(from now: Date) -> Int {
-        let remainingDays = releaseDate.timeIntervalSince(now) / Self.secondsPerDay
-        return max(0, Int(remainingDays.rounded(.up)) - 1)
+    /// A past instant a whole number of seconds before the release, so every tick lands on an exact
+    /// second of the countdown (and one tick lands exactly on the release).
+    private func tickAnchor(now: Date) -> Date {
+        releaseDate.addingTimeInterval(-releaseDate.timeIntervalSince(now).rounded(.up))
     }
+}
 
-    /// Now, then the ascending instants at which the day count drops (releaseDate - k days for
-    /// k = days...1), ending at the release itself.
-    private func dayBoundaries(from now: Date) -> [Date] {
-        let days = wholeDaysRemaining(from: now)
-        return [now] + stride(from: days, through: 0, by: -1).map {
-            releaseDate.addingTimeInterval(-Double($0) * Self.secondsPerDay)
-        }
-    }
+/// Whole seconds left, split into days and a clock that stays within 00:00:00...23:59:59.
+private struct TimeLeft: Equatable {
+    let totalSeconds: Int
+
+    var days: Int { totalSeconds / 86_400 }
+    var hours: Int { totalSeconds % 86_400 / 3_600 }
+    var minutes: Int { totalSeconds % 3_600 / 60 }
+    var seconds: Int { totalSeconds % 60 }
+
+    var clock: String { String(format: "%02d:%02d:%02d", hours, minutes, seconds) }
 }
 
 #Preview {
