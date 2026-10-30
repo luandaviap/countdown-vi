@@ -15,7 +15,7 @@ concurrency:
 jobs:
   build:
     name: Build & Package IPA
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 30
 
     steps:
@@ -24,14 +24,23 @@ jobs:
 
       - name: Select Xcode Version
         run: |
+          # Pinned to Xcode 16.2 (iphoneos18.2 SDK), as in every build so far.
+          # Never fall back to Xcode 26.x: it would switch to the iOS 26 SDK.
           echo "Available Xcode installations:"
           ls -d /Applications/Xcode*.app
-          LATEST_XCODE=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -n 1)
-          if [ -n "$LATEST_XCODE" ]; then
-            echo "Selecting: $LATEST_XCODE"
-            sudo xcode-select -s "$LATEST_XCODE"
+          XCODE_APP=/Applications/Xcode_16.2.app
+          if [ ! -d "$XCODE_APP" ]; then
+            XCODE_APP=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
+            echo "Xcode 16.2 not installed, falling back to: $XCODE_APP"
           fi
+          if [ -z "$XCODE_APP" ]; then
+            echo "Error: no Xcode 16.x installed"
+            exit 1
+          fi
+          echo "Selecting: $XCODE_APP"
+          sudo xcode-select -s "$XCODE_APP"
           xcodebuild -version
+          xcodebuild -showsdks
 
       - name: Install XcodeGen
         run: |
@@ -85,6 +94,12 @@ jobs:
           cd ../..
           
           ls -lh build/CountdownVI-unsigned.ipa
+
+          echo "Toolchain recorded in the IPA:"
+          APP_PLIST=build/ipa/Payload/CountdownVI.app/Info.plist
+          for key in CFBundleVersion CFBundleShortVersionString DTXcode DTSDKName; do
+            echo "$key = $(/usr/libexec/PlistBuddy -c "Print :$key" "$APP_PLIST")"
+          done
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v7.0.2
