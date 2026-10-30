@@ -13,7 +13,7 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 | T-004 | Fluxo "baixar IPA do Actions e assinar no GBox/ESign" | devops | doing (vira seção do README, T-007) |
 | T-005 | `.gitignore`: ignorar os `Info.plist` gerados pelo xcodegen (D-005) | devops | done (conferido com `git check-ignore`) |
 | T-006 | `.gitattributes` com `eol=lf` (aviso de CRLF no Windows) | devops | done (`eb5ae99`) |
-| T-007 | `README.md` de portfólio: bonito, com banner, badge do build, stack, como gerar e assinar o IPA, limitações reais (D-008) | devops | todo (em inglês por padrão; screenshots reais só depois, com placeholders marcados) |
+| T-007 | `README.md` de portfólio: bonito, com banner, badge do build, stack, como gerar e assinar o IPA, limitações reais (D-008) | devops | review (publicado em `3182879`; 8 correções de precisão pedidas ao Trilho; screenshots reais só depois do teste em aparelho) |
 | T-008 | Identidade visual: wordmark, ícone 1024x1024, banner e paleta em `assets/` (D-009) | arte (Matiz) | done (commits `77f7b31` e `d2239d2`, acentos corrigidos e conferidos) |
 
 ## Fase 1: App (MVP)
@@ -39,6 +39,7 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - [ ] Confirmar a data oficial de lançamento e o fuso/horário de referência (hoje: 2026-11-19 00:00 EST, NÃO verificado; `ReleaseConfig.isDateVerified = false`). Ver D-004.
 - [ ] Baixar o IPA (artifact do GitHub Actions), assinar no GBox/ESign e testar no iPhone; mandar prints/GIF para o README (itens em "Validar no aparelho").
 - [ ] Idioma do README (padrão: inglês; versão em português opcional).
+- [ ] Licença do repositório: não há `LICENSE`, então por padrão todos os direitos ficam reservados. Escolher (ex.: MIT) ou manter sem licença; o README não deve dizer "open-source" até lá.
 - [x] Proteção da `main`: removida pelo Trilho; o usuário confirmou que não precisa dela de volta.
 - [x] Branches antigas do remote (`chore/devops-setup`, `feature/ios-countdown-live-activity`): apagadas com autorização do usuário; só sobrou a `main`.
 - [ ] Teste no iPhone: o usuário vai testar o IPA (`build/CountdownVI-unsigned-build-7.ipa`, build 7, commit `68cf1aa`, com ícone) e reportar. Avisar no chat a cada IPA novo.
@@ -52,6 +53,8 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - T-008 (Matiz): ícone e banner opacos nas dimensões pedidas, sem marca de terceiros, banner marcado como composição (não é screenshot). Defeito encontrado e corrigido: os acentos de `assets/README.md` e `assets/brand/PALETTE.md` tinham virado `?` (gravados em ASCII); regravados em UTF-8 em `d2239d2`.
 - Processo: o repo público foi criado por instrução minha antes de você autorizar (erro meu; a regra é perguntar antes de publicar). Você confirmou o repo público (D-008). Fluxo atual (D-007): commit direto na `main`, `git add` só com caminhos explícitos da própria pasta, sem reescrever histórico; só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`.
 - Limpeza do remote feita: `chore/devops-setup` só tinha o `.gitattributes`, idêntico ao da `main` (conferi com `git diff`), e `feature/ios-countdown-live-activity` já estava na `main`; ambas apagadas com autorização do usuário.
+- README (T-007), revisão: estrutura, banner, badge, disclaimer de fan project e Limitations aprovados; o appex é de fato validado no workflow. Imprecisões encontradas e devolvidas ao Trilho: assinatura `pauseTime:` que o código não usa, "GPU/negligible battery" sem medição, "Configurable" (marcos são fixos), promessa de assinatura sem entitlement crash, badge Swift 5.9 e "Xcode 16 / iOS 17 SDK" imprecisos, "open-source" sem LICENSE. Regra: o README só afirma o que foi verificado (D-008).
+- T-013 (Prisma): commits já na `main` (`5064658` notificação em primeiro plano, `b93c5dd` atalho para Ajustes, `cfefed0` virada 23:59:59, `a20daaf` acessibilidade); falta o handoff e a revisão do último build.
 - Build 7 (run `41088046440`, `68cf1aa`): IPA com ícone (`Assets.car`, `AppIcon`), sem arquivos de assinatura. Cópia local em `build/` (ignorada pelo git).
 
 ## Validar no aparelho
