@@ -16,7 +16,7 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 | T-007 | `README.md` de portfólio (D-008) | devops | review (publicado; falta a correção da T-015 e as imagens da T-019) |
 | T-008 | Identidade visual: wordmark, ícone 1024x1024, banner e paleta em `assets/` (D-009) | arte (Matiz) | done |
 | T-009 | Mockup fiel do app como estava (v1, preto e branco) em `assets/mockups/` | arte (Matiz) | done (commit `ffcea7d`, local) |
-| T-015 | README: corrigir o texto do timer (linha 38) e checar actions em Node 24 (`checkout@v4`, `upload-artifact@v4`) | devops (Trilho, Sonnet 5.5) | doing |
+| T-015 | README: corrigir o texto do timer (linha 38) e checar actions em Node 24 (`checkout@v4`, `upload-artifact@v4`) | devops (Trilho, Sonnet 5.5) | done (`6bd0b4b`; conferi: as 3 actions na última versão e em Node 24, README correto, run `41091728283` verde; o passo de release só roda em tag e nunca foi exercitado) |
 
 ## Fase 1: App (MVP)
 | ID | Tarefa | Agente | Status |
@@ -26,8 +26,8 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 | T-012 | Notificações locais nos marcos (30d, 7d, 1d, 1h, lançamento) | frontend | done (aparelho pendente) |
 | T-013 | Polimento visual, acessibilidade, ícone, banner em primeiro plano, atalho para Ajustes | frontend | done |
 | T-014 | Build a cada push na `main` como verificação (sem PR, D-007) | devops | done |
-| T-016 | Widget comum (Home Screen + Lock Screen) que não expira, com entradas por dia e `Text(timerInterval:)` (D-013) | frontend (Prisma) | doing |
-| T-017 | Design v2 a partir da referência do usuário (`docs/design/reference-sunset-countdown.png`): tokens, cena em vetor, mockups rotulados de home, Lock Screen, Dynamic Island e widget (D-012) | arte (Matiz) | doing |
+| T-016 | Widget comum (Home Screen + Lock Screen) que não expira, com entradas por dia e `Text(timerInterval:)` (D-013) | frontend (Prisma) | done (`0e8ee9c`; li o código e conferi o IPA do build 13; aparelho pendente) |
+| T-017 | Design v2 a partir da referência do usuário (`docs/design/reference-sunset-countdown.png`): tokens, cena em vetor, mockups rotulados de home, Lock Screen, Dynamic Island e widget (D-012) | arte (Matiz) | doing (v2 entregue em `76a0c4c`, local; v2.1 pedida: degradê em tela cheia, fundo retrato gerado, cantos, glifo de palmeira, hero) |
 | T-018 | Implementar o design v2 no app, Live Activity e widget | frontend | todo (só depois de o usuário aprovar os mockups da T-017) |
 | T-019 | README: trocar "Screenshots coming soon" por mockups rotulados (hero + telas) (D-011) | devops | todo (depois da T-017) |
 
@@ -47,6 +47,7 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 - [x] Troca do Trilho para o Sonnet 5.5: feita.
 - [x] Proteção da `main` removida e branches antigas apagadas.
 - [x] Teste no iPhone (build 10): o usuário confirmou que a Live Activity aparece. Detalhes dos demais itens ainda não reportados.
+- [ ] Testar o widget: IPA do build 13 (`build/CountdownVI-unsigned-build-13.ipa`, run `41091728283`, com ícone e widget).
 - [ ] Push dos commits locais (mockups v1 e docs): sem objeção; sobem junto com o próximo push do Trilho.
 
 ## Notas de revisão
@@ -57,6 +58,9 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 - README: a imprecisão da linha 38 (timer) ainda não foi corrigida (T-015). Regra: o README só afirma o que foi verificado.
 - Processo: D-007 (commit direto na `main`, `git add` só de caminhos próprios, sem reescrever histórico); só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`. Decisões sobre licença, nome, visibilidade e marca passam pelo usuário.
 - O Trilho esgotou a cota no Antigravity (Gemini); o agente foi trocado no mesmo terminal para o Claude Sonnet 5.5 (preset `Claude Sonnet 5.5`, auto mode). Papel `cvi-devops` atualizado para a D-007.
+- T-016 (widget, revisão): `CountdownTimelineProvider` pré-calcula entradas por virada de dia (teto de 60, `.atEnd`; depois do lançamento `[agora]` e `.never`), dias pela regra da D-010, relógio com `Text(timerInterval:)` de intervalo sempre válido; sem App Group, push nem entitlements. Risco conhecido: pode mostrar 24:00:00 por ~1s na virada.
+- README: o texto "and the future widget" deve virar "and the widget" (o widget já está na `main`); ajustar na T-019.
+- Mockups v2: estrutura e rótulos honestos, mas a home usa fundo azul chapado em vez do degradê do próprio DESIGN.md, a cena fica colada em um retângulo com cantos pretos vazando da moldura, e a Dynamic Island tem quadrados vazios no lugar do glifo. O Matiz gera imagens com IA (`concept-sunset-study.png`), que ficou bem mais próxima da referência do que o vetor; decisão pendente do usuário sobre qual cena o app usa.
 - Referência de design do usuário: `docs/design/reference-sunset-countdown.png` (imagem conceito gerada com GPT; não é o app).
 
 ## Validar no aparelho
@@ -78,4 +82,7 @@ Itens que só se confirmam em iPhone real com o IPA assinado:
 - [ ] O banner aparece com o app aberto quando um marco dispara
 - [ ] Dynamic Type no maior tamanho de acessibilidade: tela rolável, número em 1 linha; VoiceOver lê dias, horas e minutos
 - [ ] Com Reduce Motion ativado, os dígitos trocam sem animação
-- [ ] Widget comum (T-016): adiciona na Home e na Lock Screen, e o dia decrementa na virada
+- [ ] Widget (T-016): aparece na galeria (Home: pequeno e médio; Lock Screen: retangular e circular) no IPA assinado
+- [ ] Widget: continua contando com o app fechado por mais de 1 dia (a virada decrementa os dias sozinha)
+- [ ] Widget: na virada o relógio não mostra 24:00:00 (ou só por ~1s); se mostrar, ancorar o timer em virada menos 1s
+- [ ] Widget: "Data provisória" aparece no pequeno e no médio; o VoiceOver lê "Faltam N dias para GTA VI. Data provisória"
