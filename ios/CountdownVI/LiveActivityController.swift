@@ -7,7 +7,16 @@ import OSLog
 enum LiveActivityController {
     private static let logger = Logger(subsystem: "com.countdownvi.app", category: "LiveActivity")
 
-    /// Idempotent: call whenever the app becomes active.
+    /// Whether the "Ativar Live Activity" button can help: activities allowed and none running.
+    static var canStartActivity: Bool {
+        ActivityAuthorizationInfo().areActivitiesEnabled
+            && !Activity<CountdownActivityAttributes>.activities.contains {
+                $0.activityState == .active || $0.activityState == .stale
+            }
+    }
+
+    /// Idempotent: call whenever the app becomes active or the user taps the start button
+    /// (both are foreground, which Activity.request requires).
     static func sync(now: Date = .now) async {
         let releaseDate = ReleaseConfig.releaseDate
         let running = Activity<CountdownActivityAttributes>.activities.filter {

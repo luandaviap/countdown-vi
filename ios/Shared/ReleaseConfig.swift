@@ -18,6 +18,9 @@ enum ReleaseConfig {
         return date
     }()
 
+    /// The home progress bar covers only this final stretch before the release.
+    static let progressWindow: TimeInterval = 30 * 86_400
+
     /// Local notification milestones, as offsets before `releaseDate`.
     enum Milestone: String, CaseIterable {
         case thirtyDays

@@ -14,10 +14,8 @@ struct CountdownVIApp: App {
             CountdownView()
                 .preferredColorScheme(.dark)
                 .task(id: scenePhase) {
-                    // Activity.request only works in the foreground; also restarts the activity
-                    // after the system ends it (Live Activities have a limited lifetime).
+                    // The Live Activity sync lives in CountdownView, which also shows its start button.
                     guard scenePhase == .active else { return }
-                    await LiveActivityController.sync()
                     await NotificationScheduler.rescheduleIfAuthorized()
                 }
         }
