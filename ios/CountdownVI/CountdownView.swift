@@ -7,6 +7,9 @@ struct CountdownView: View {
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
+    /// The opt-in button is shown only while the system prompt has never been answered.
+    @State private var canAskForNotifications = false
+
     var body: some View {
         // Text(timerInterval:) ticks the hours/minutes/seconds on its own; the view only
         // needs to re-render when the day count changes, so the timeline fires at day boundaries.
@@ -24,12 +27,35 @@ struct CountdownView: View {
                 }
 
                 releaseInfo
+
+                if canAskForNotifications && context.date < releaseDate {
+                    notificationOptInButton
+                }
             }
             .padding(24)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black.ignoresSafeArea())
             .foregroundStyle(.white)
         }
+        .task {
+            canAskForNotifications = await NotificationScheduler.authorizationStatus() == .notDetermined
+        }
+    }
+
+    private var notificationOptInButton: some View {
+        Button {
+            Task {
+                await NotificationScheduler.requestAuthorizationAndSchedule()
+                canAskForNotifications = false
+            }
+        } label: {
+            Label("Avisar nos marcos", systemImage: "bell.badge")
+                .font(.system(.headline, design: .rounded))
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.white)
+        .foregroundStyle(.black)
+        .accessibilityHint(Text("Receba avisos conforme o lançamento se aproxima"))
     }
 
     private func countdown(now: Date) -> some View {

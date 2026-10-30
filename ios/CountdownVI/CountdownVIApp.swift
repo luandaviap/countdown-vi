@@ -13,6 +13,7 @@ struct CountdownVIApp: App {
                     // after the system ends it (Live Activities have a limited lifetime).
                     guard scenePhase == .active else { return }
                     await LiveActivityController.sync()
+                    await NotificationScheduler.rescheduleIfAuthorized()
                 }
         }
     }

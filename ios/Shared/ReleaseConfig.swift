@@ -17,4 +17,27 @@ enum ReleaseConfig {
         }
         return date
     }()
+
+    /// Local notification milestones, as offsets before `releaseDate`.
+    enum Milestone: String, CaseIterable {
+        case thirtyDays
+        case sevenDays
+        case oneDay
+        case oneHour
+        case release
+
+        var timeBeforeRelease: TimeInterval {
+            switch self {
+            case .thirtyDays: 30 * 86_400
+            case .sevenDays: 7 * 86_400
+            case .oneDay: 86_400
+            case .oneHour: 3_600
+            case .release: 0
+            }
+        }
+
+        var fireDate: Date {
+            releaseDate.addingTimeInterval(-timeBeforeRelease)
+        }
+    }
 }
