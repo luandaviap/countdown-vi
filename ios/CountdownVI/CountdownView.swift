@@ -1,4 +1,6 @@
 import SwiftUI
+import UIKit
+import UserNotifications
 
 struct CountdownView: View {
     private static let secondsPerDay: TimeInterval = 86_400
@@ -6,9 +8,11 @@ struct CountdownView: View {
     private let releaseDate = ReleaseConfig.releaseDate
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
 
-    /// The opt-in button is shown only while the system prompt has never been answered.
-    @State private var canAskForNotifications = false
+    /// Drives the opt-in button (never asked) and the Settings shortcut (denied).
+    @State private var notificationStatus: UNAuthorizationStatus?
 
     var body: some View {
         // Text(timerInterval:) ticks the hours/minutes/seconds on its own; the view only
@@ -28,8 +32,12 @@ struct CountdownView: View {
 
                 releaseInfo
 
-                if canAskForNotifications && context.date < releaseDate {
-                    notificationOptInButton
+                if context.date < releaseDate {
+                    switch notificationStatus {
+                    case .notDetermined: notificationOptInButton
+                    case .denied: notificationSettingsShortcut
+                    default: EmptyView()
+                    }
                 }
             }
             .padding(24)
@@ -37,8 +45,10 @@ struct CountdownView: View {
             .background(Color.black.ignoresSafeArea())
             .foregroundStyle(.white)
         }
-        .task {
-            canAskForNotifications = await NotificationScheduler.authorizationStatus() == .notDetermined
+        .task(id: scenePhase) {
+            // Re-read on every activation so returning from Settings updates the UI.
+            guard scenePhase == .active else { return }
+            notificationStatus = await NotificationScheduler.authorizationStatus()
         }
     }
 
@@ -46,7 +56,7 @@ struct CountdownView: View {
         Button {
             Task {
                 await NotificationScheduler.requestAuthorizationAndSchedule()
-                canAskForNotifications = false
+                notificationStatus = await NotificationScheduler.authorizationStatus()
             }
         } label: {
             Label("Avisar nos marcos", systemImage: "bell.badge")
@@ -56,6 +66,21 @@ struct CountdownView: View {
         .tint(.white)
         .foregroundStyle(.black)
         .accessibilityHint(Text("Receba avisos conforme o lançamento se aproxima"))
+    }
+
+    private var notificationSettingsShortcut: some View {
+        Button {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                openURL(url)
+            }
+        } label: {
+            Label("Avisos desativados. Ativar nos Ajustes", systemImage: "bell.slash")
+                .font(.footnote)
+                .multilineTextAlignment(.center)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(.secondary)
+        .accessibilityHint(Text("Abre os Ajustes do app"))
     }
 
     private func countdown(now: Date) -> some View {
