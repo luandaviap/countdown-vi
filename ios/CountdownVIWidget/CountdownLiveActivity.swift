@@ -27,9 +27,12 @@ struct CountdownLiveActivity: Widget {
                 Text("VI")
                     .font(.system(.caption, design: .rounded, weight: .heavy))
             } compactTrailing: {
+                // Timer text reserves its widest layout by default; above 24h it shows total hours
+                // ("480:12:03", 9 glyphs), so pin a width that fits that at caption2 monospaced digits.
                 CountdownTimerText(releaseDate: context.state.releaseDate)
-                    .font(.system(.caption, design: .rounded, weight: .semibold))
-                    .frame(maxWidth: 64)
+                    .font(.system(.caption2, design: .rounded, weight: .semibold))
+                    .multilineTextAlignment(.trailing)
+                    .frame(width: 56, alignment: .trailing)
             } minimal: {
                 Image(systemName: "timer")
             }
