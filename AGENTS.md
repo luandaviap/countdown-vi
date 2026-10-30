@@ -34,7 +34,9 @@ countdown-vi/
 │   ├── orchestrator.md
 │   ├── frontend.md
 │   ├── backend.md
-│   └── devops.md
+│   ├── devops.md
+│   └── art.md
+├── assets/              # logo, banner, ícone, imagens do README (dono: arte)
 ├── ios/                 # app + widget (dono: frontend)
 ├── backend/             # Worker opcional (dono: backend)
 ├── .github/workflows/   # CI/CD (dono: devops)
@@ -50,7 +52,8 @@ countdown-vi/
 | Orquestrador | Claude | `docs/`, `AGENTS.md`, `CLAUDE.md`, `.agents/` | código de produto |
 | Front-end | Claude (2º terminal) | `ios/` | `backend/`, `.github/` |
 | Back-end | Codex | `backend/` | `ios/`, `.github/` |
-| DevOps | Antigravity | `.github/`, `scripts/`, configs de repo | código de produto |
+| DevOps | Antigravity | `.github/`, `scripts/`, configs de repo, `README.md` | código de produto |
+| Arte | Codex | `assets/` (logo, banner, ícone, imagens do README) | `ios/`, `backend/`, `.github/`, `docs/` |
 
 Regra: cada agente só edita a própria pasta. Se precisar de mudança fora dela, pede ao orquestrador em vez de editar.
 

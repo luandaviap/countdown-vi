@@ -11,6 +11,7 @@ Dono: orquestrador. Status: `todo` | `doing` | `review` | `done`.
 | T-004 | Documentar fluxo: baixar IPA do Actions, assinar no GBox/ESign | devops | todo |
 | T-005 | `.gitignore`: ignorar os `Info.plist` gerados pelo xcodegen (D-005; `*.xcodeproj` já está) | devops | todo |
 | T-006 | `.gitattributes` com `*.swift`, `*.yml`, `*.md` em `eol=lf` (aviso de CRLF no Windows) | devops | doing (commit `7af7da5` na branch do Trilho; falta entrar na `main`) |
+| T-008 | Identidade visual: wordmark/logo original, ícone do app 1024x1024, banner de capa e paleta em `assets/` (D-009) | arte (Matiz) | doing |
 | T-007 | `README.md` de portfólio: bonito, com screenshots/GIF reais, badge do build, stack, como gerar e assinar o IPA (D-008) | devops | todo (aguarda o idioma e as imagens reais) |
 
 ## Fase 1: App (MVP)

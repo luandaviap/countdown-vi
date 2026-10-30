@@ -37,6 +37,13 @@
 **Porquê:** o valor do projeto é ser visto. Como o repo é público, nunca vão segredos, certificados nem IPAs assinados para ele (ver `.gitignore`).
 **Regras do README:** não inventar fatos nem imagens. Screenshots só de execução real (simulador ou aparelho); até existirem, usar placeholders claramente marcados. Não afirmar que o build ou a Live Activity funcionam enquanto o CI e o aparelho não confirmarem. Mostrar a data como provisória enquanto `isDateVerified = false` (D-004).
 
+## D-009: Agente de Arte (Matiz, Codex) cuida das imagens do README e da marca (2026-10-30)
+**Contexto:** o usuário pediu um agente (modelo GPT Terra) para banner, logo, ícone e imagens do README.
+**Decisão:** novo agente **Matiz** (papel `cvi-arte`, Codex, modelo `gpt-6.1-terra` medium só na sessão, YOLO mode). Dono da pasta `assets/`; regras em `.agents/art.md`. O texto do README continua com o DevOps (T-007); a integração do ícone no Xcode é do front-end (T-013).
+**Porquê:** separa a produção visual do código; o repo é público e de portfólio (D-008).
+**Regras:** imagem gerada nunca é passada como screenshot real (prefixos `concept-`/`mockup-`; screenshots reais só do usuário); sem logotipo, arte ou marca oficial da Rockstar/GTA (repo público, arte original); sem data de lançamento como fato em imagem (D-004).
+**Nota:** o modelo foi escolhido no menu do Codex como "GPT-6.1 Terra", a opção mais próxima do "GPT 6 Terra" pedido; trocar com `/model` se o usuário preferir outro.
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
