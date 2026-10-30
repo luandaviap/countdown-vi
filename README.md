@@ -7,24 +7,27 @@
     <img src="https://github.com/luandaviap/countdown-vi/actions/workflows/build-ios.yml/badge.svg" alt="Build iOS (Unsigned IPA)">
   </a>
   <img src="https://img.shields.io/badge/iOS-17.0%2B-black?logo=apple" alt="iOS 17.0+">
-  <img src="https://img.shields.io/badge/Swift-5.9-orange?logo=swift" alt="Swift 5.9">
+  <img src="https://img.shields.io/badge/Swift-5-orange?logo=swift" alt="Swift 5">
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
+  </a>
   <img src="https://img.shields.io/badge/Architecture-100%25%20On--Device-success" alt="100% On-Device">
 </p>
 
 <p align="center">
-  <strong>Countdown VI</strong> is an open-source iOS portfolio application featuring real-time countdown to GTA 6 with Lock Screen and Dynamic Island Live Activities.<br>
-  Built with SwiftUI, ActivityKit, and WidgetKit, engineered specifically to compile without a Mac and run fully offline without servers.
+  <strong>Countdown VI</strong> is an iOS portfolio project featuring a real-time countdown with Lock Screen and Dynamic Island Live Activities.<br>
+  Built with SwiftUI, ActivityKit, and WidgetKit, designed to build in CI and run fully offline without a backend server.
 </p>
 
 ---
 
 ## Features
 
-- **Real-Time Countdown:** Smooth days, hours, minutes, and seconds countdown rendered with native system typography and automatic day rollover arithmetic.
-- **Live Activity (Dynamic Island & Lock Screen):** Glanceable countdown on compatible iPhones with custom compact and expanded Dynamic Island presentations.
-- **Local Milestone Notifications:** Configurable local reminders at key milestones (30 days, 7 days, 1 day, 1 hour, and release moment).
-- **Dark Mode Aesthetic:** Custom-crafted color palette inspired by neon sunsets and midnight contrast (`#14101F`).
-- **Zero-Server Reliability:** Independent from backend infrastructure; all state, timers, and notifications originate and live strictly on the device.
+- **Real-Time Countdown:** Continuous countdown display with days, hours, minutes, and seconds, featuring day rollover arithmetic and accessibility support (Dynamic Type and VoiceOver).
+- **Live Activity (Dynamic Island & Lock Screen):** Glanceable Lock Screen widget and Dynamic Island presentation (compact and expanded layouts) for compatible devices.
+- **Fixed Milestone Notifications:** Local reminders scheduled at predefined milestones (30 days, 7 days, 1 day, 1 hour, and launch moment) defined in `ReleaseConfig.Milestone`.
+- **Foreground & Permission Handling:** In-app notification presentation banner when active, with a direct shortcut to iOS Settings if notification permissions are denied.
+- **Zero-Server Operation:** Operates independently from backend services; all state, timers, and scheduled notifications reside strictly on-device.
 
 ---
 
@@ -32,16 +35,16 @@
 
 Most countdown applications rely on remote push notifications, background workers, or App Groups to sync widgets with an app. This project deliberately avoids those dependencies to comply with on-device signing constraints (**Decision D-001**):
 
-1. **Self-Updating Timers (`Text(timerInterval:)`):**
-   Rather than running background timer threads or scheduling wakeups, the UI relies on Apple's `Text(timerInterval:pauseTime:countsDown:)`. The iOS render server drives the second-by-second updates natively on the GPU with negligible battery impact.
+1. **Native System Timers (`Text(timerInterval:countsDown:)`):**
+   Rather than running active background timer threads or continuous app loops, the UI uses SwiftUI's `Text(timerInterval:countsDown:)`. This delegates time rendering directly to the system view hierarchy.
 2. **Local ActivityKit (`pushType: nil`):**
-   The Live Activity is initiated and tracked locally via `Activity.request(attributes:content:pushType: nil)`. It requires no Apple Push Notification service (APNs) keys or certificates.
+   The Live Activity is requested locally by the application using `Activity.request(attributes:content:pushType: nil)`. It requires no Apple Push Notification service (APNs) keys or remote server tokens.
 3. **Local Notifications (`UserNotifications`):**
    Milestone alerts are scheduled directly with the system `UNUserNotificationCenter` using `UNTimeIntervalNotificationTrigger` calculated against the release timestamp.
 4. **Single Source of Truth (`ReleaseConfig.swift`):**
    The target date and milestone thresholds reside in a shared configuration file included across all build targets.
-5. **Why No Remote Push or App Groups?**
-   Third-party side-loading and signing utilities (ESign, GBox, AltStore) cannot generate custom provisioning profiles with push notification entitlements or custom App Group containers. Avoiding them ensures the app can be signed with any free developer certificate or enterprise profile without entitlement crashes.
+5. **Signing Compatibility:**
+   By deliberately avoiding remote push capabilities and App Groups, the application minimizes specialized provisioning profile requirements that can be problematic with third-party on-device signing tools (e.g., GBox, ESign).
 
 ---
 
@@ -73,7 +76,7 @@ Because local development takes place on Windows without physical macOS hardware
 
 ### Automated CI Pipeline
 
-The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos-14` (Apple Silicon) runner on every push to `main`:
+The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos-14` (Apple Silicon) runner on every push to `main` and on `workflow_dispatch`:
 1. Generates the Xcode project on-the-fly using `xcodegen generate`.
 2. Archives the project using `xcodebuild archive` with `CODE_SIGNING_ALLOWED=NO`.
 3. Validates that `PlugIns/CountdownVIWidget.appex` is embedded inside `CountdownVI.app`.
@@ -89,25 +92,25 @@ The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos
 5. Sign and install with your certificate.
 
 > [!IMPORTANT]
-> **Side-loading & Extension Disclaimer:** While the unsigned IPA builds cleanly and embeds the Widget Extension bundle, third-party on-device signers handle app extensions differently. Proper extension signing on a physical device remains subject to real-world validation.
+> **On-Device Signing Note:** While the unsigned IPA builds cleanly and embeds `PlugIns/CountdownVIWidget.appex`, how third-party on-device signing tools sign and load widget extensions remains subject to physical iPhone testing.
 
 ---
 
-## Limitations & Edge Cases
+## Limitations & Validation Scope
 
 - **Live Activity Duration (~8h System Limit):**
   Without remote APNs pushes, iOS limits Live Activities to approximately 8 hours of active display before removing them from the Dynamic Island (and up to 4 hours on Lock Screen history). The app automatically requests or re-syncs the activity whenever brought to the foreground (**Decision D-006**).
 - **Provisional Launch Date:**
-  The current date in `ReleaseConfig` (`2026-11-19T00:00:00-05:00`, `isDateVerified = false`) is an unverified placeholder (**Decision D-004**). The UI clearly labels the countdown as provisional until officially verified.
+  The current date in `ReleaseConfig` (`2026-11-19T00:00:00-05:00`, `isDateVerified = false`) is an unverified placeholder (**Decision D-004**). The UI clearly labels the countdown as provisional until officially confirmed.
 - **Validation Scope:**
-  All code compiles cleanly on GitHub Actions under Xcode 16 / iOS 17 SDK. Final hardware rendering (Dynamic Island padding, vibration/sound triggers) requires on-device confirmation.
+  All code compiles cleanly on GitHub Actions under iOS 17.0+ deployment target. Final hardware behaviors (Dynamic Island padding, vibration/sound triggers, extension loading) require on-device confirmation.
 
 ---
 
 ## Screenshots
 
 > **Screenshots coming soon.**  
-> In accordance with project policy against placeholder imagery, real device captures (Lock Screen, Dynamic Island compact/expanded, and main view) will be added once validated on hardware.
+> Real device captures (Lock Screen, Dynamic Island compact/expanded, and main view) will be added here once validated on physical hardware.
 
 ---
 
@@ -117,6 +120,12 @@ The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos
 - [x] Phase 1: Real-time countdown UI, local Live Activity, local milestone notifications.
 - [ ] Phase 1.5: Hardware verification on physical iPhone via GBox/ESign.
 - [ ] Phase 2 (Optional): Lightweight Cloudflare Worker in `backend/` to serve verified release dates dynamically without requiring new app builds.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
