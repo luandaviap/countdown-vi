@@ -39,7 +39,9 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - [ ] Confirmar a data oficial de lançamento e o fuso/horário de referência (hoje: 2026-11-19 00:00 EST, NÃO verificado; `ReleaseConfig.isDateVerified = false`). Ver D-004.
 - [ ] Baixar o IPA (artifact do GitHub Actions), assinar no GBox/ESign e testar no iPhone; mandar prints/GIF para o README (itens em "Validar no aparelho").
 - [ ] Idioma do README (padrão: inglês; versão em português opcional).
-- [ ] Ciente: a proteção da `main` foi removida pelo Trilho (após o merge do PR #1) com base na minha mensagem sobre a D-007, sem sua confirmação explícita desse passo. É o que você pediu ("push na main resolve"); se quiser a proteção de volta, é só dizer.
+- [x] Proteção da `main`: removida pelo Trilho; o usuário confirmou que não precisa dela de volta.
+- [x] Branches antigas do remote (`chore/devops-setup`, `feature/ios-countdown-live-activity`): apagadas com autorização do usuário; só sobrou a `main`.
+- [ ] Teste no iPhone: o usuário vai testar o IPA (`build/CountdownVI-unsigned-build-7.ipa`, build 7, commit `68cf1aa`, com ícone) e reportar. Avisar no chat a cada IPA novo.
 
 ## Notas de revisão
 - CI verde: o IPA tem `Payload/CountdownVI.app` com `PlugIns/CountdownVIWidget.appex`, `NSSupportsLiveActivities = true`, iOS mínimo 17.0, extensão com `com.apple.widgetkit-extension`, e **nenhum** entitlements, provisioning profile ou `_CodeSignature` (D-001 preservada). O IPA ainda não tem ícone nem `Assets.car` (T-013). Compilar não prova comportamento: Live Activity, notificações e assinatura da extensão só se confirmam em aparelho.
@@ -49,7 +51,8 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - T-012: `UserNotifications` local, marcos só em `ReleaseConfig.Milestone`, reagendamento idempotente por ID, permissão pedida em contexto (botão "Avisar nos marcos"). A notificação de lançamento usa a data provisória (D-004).
 - T-008 (Matiz): ícone e banner opacos nas dimensões pedidas, sem marca de terceiros, banner marcado como composição (não é screenshot). Defeito encontrado e corrigido: os acentos de `assets/README.md` e `assets/brand/PALETTE.md` tinham virado `?` (gravados em ASCII); regravados em UTF-8 em `d2239d2`.
 - Processo: o repo público foi criado por instrução minha antes de você autorizar (erro meu; a regra é perguntar antes de publicar). Você confirmou o repo público (D-008). Fluxo atual (D-007): commit direto na `main`, `git add` só com caminhos explícitos da própria pasta, sem reescrever histórico; só o orquestrador commita `docs/`, `AGENTS.md`, `CLAUDE.md` e `.agents/`.
-- Limpeza pendente no remote: as branches `chore/devops-setup` e `feature/ios-countdown-live-activity` (já incorporadas à `main`; PR #1 mergeado, PR #2 fechado).
+- Limpeza do remote feita: `chore/devops-setup` só tinha o `.gitattributes`, idêntico ao da `main` (conferi com `git diff`), e `feature/ios-countdown-live-activity` já estava na `main`; ambas apagadas com autorização do usuário.
+- Build 7 (run `41088046440`, `68cf1aa`): IPA com ícone (`Assets.car`, `AppIcon`), sem arquivos de assinatura. Cópia local em `build/` (ignorada pelo git).
 
 ## Validar no aparelho
 Itens que só se confirmam em iPhone real com o IPA assinado:
