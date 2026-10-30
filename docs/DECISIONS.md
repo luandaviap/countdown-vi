@@ -49,6 +49,29 @@
 **Porquê:** garante que o relógio vá de 00:00:00 a 23:59:59 (nunca 24:00:00) e que dias e relógio nunca divirjam, sem depender de como `Text(timerInterval:)` arredonda (não dá para conferir sem aparelho). Na Live Activity, `Text(timerInterval:)` é obrigatório: é o que o sistema atualiza sem o app (D-001).
 **Custo:** 1 render por segundo, só com o app em primeiro plano. Sem servidor, sem push. D-001 intacta.
 
+## D-011: O README pode usar mockups gerados pelo Matiz, sempre rotulados como mockup (2026-10-30)
+**Contexto:** o usuário não quer ter de enviar prints; pediu que o Matiz gere as imagens do README.
+**Decisão:** imagens renderizadas pelo Matiz entram no README, **legendadas como mockup renderizado, nunca como screenshot**. Arquivos com prefixo `mockup-`. Isso altera a regra anterior da D-009 (screenshots só do usuário): prints reais continuam bem-vindos se o usuário quiser, mas não são mais pré-requisito.
+**Porquê:** o repositório é de portfólio e precisa de imagens; a honestidade vem do rótulo, não de proibir o mockup.
+**Guarda-corpos:** sem afirmar que a imagem é o app rodando; o mockup deve seguir o design implementado (ou marcar "proposta de design" se ainda não estiver no app).
+
+## D-012: Direção de design v2, "pôr do sol neon com vidro" (2026-10-30)
+**Contexto:** o usuário trouxe uma referência gerada com GPT (`docs/design/reference-sunset-countdown.png`): fundo em gradiente roxo, magenta e laranja, quatro blocos de vidro (dias, horas, minutos, segundos), barra de progresso, botão em gradiente, cena de pôr do sol com palmeiras e skyline, e ícone de palmeira com "19d" na Dynamic Island.
+**Decisão:** adotar essa direção para a tela, a Live Activity e o widget. O Matiz entrega tokens, uma cena em vetor original e mockups; só depois de o usuário aprovar o Prisma implementa (T-018).
+**Pontos abertos (propostas):** nome na tela sem "Leonida" (estado fictício, marca da Rockstar), mantendo "GTA VI"/"Countdown VI"; barra de progresso sobre os últimos 30 dias até o lançamento; botão "Ativar Live Activity" visível quando não há activity ativa.
+**Restrições:** arte original (sem logotipo nem arte oficial da Rockstar/GTA); sem fonte sem licença embutida (usar fontes do sistema, ex.: largura condensada); a data segue provisória na UI (D-004); D-001 intacta. Na Dynamic Island, "19d" é um instantâneo estático (o texto que se atualiza sozinho é o de timer); aceitável dada a vida de ~8h da activity, a validar.
+**Porquê:** o app hoje é preto e branco e não conversa com o ícone e o banner; a referência dá identidade sem exigir nenhum recurso novo de assinatura.
+
+## D-013: Widget comum aprovado (resolve a consequência da D-006) (2026-10-30)
+**Decisão:** o usuário aprovou um widget comum (Home Screen e Lock Screen) na mesma Widget Extension. Usa `TimelineProvider` com entradas pré-calculadas a cada virada de dia até o lançamento e `Text(timerInterval:)` para o relógio; a data vem do `ReleaseConfig` compilado nos dois alvos.
+**Porquê:** diferente da Live Activity, o widget não expira em ~8h e não precisa de push, App Groups nem entitlements (D-001 intacta).
+**Risco:** a extensão é a mesma já carregada pelo assinador (a Live Activity apareceu no aparelho), mas o widget em si ainda precisa ser validado no aparelho.
+
+## D-014: Servidor de data por região fica para depois; Forja em espera (2026-10-30)
+**Contexto:** o usuário quer, "logo mais", um servidor que entregue a data e a hora conforme a região da pessoa. Isso antecipa a fase 2 da D-002 (T-020 e T-021).
+**Decisão:** por enquanto a data segue provisória e local (D-004). Antes de a Forja começar, preciso do usuário: fonte oficial da data, conta Cloudflare para o deploy e a regra por região (um instante único ou horário local de cada região).
+**Porquê:** sem a data oficial o servidor só serviria o mesmo valor não verificado. A D-001 não impede: buscar JSON por HTTP não exige entitlement.
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
