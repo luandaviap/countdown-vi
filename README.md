@@ -25,7 +25,7 @@
 
 - **Real-Time Countdown:** Continuous countdown display with days, hours, minutes, and seconds, featuring day rollover arithmetic and accessibility support (Dynamic Type and VoiceOver).
 - **Live Activity (Dynamic Island & Lock Screen):** Glanceable Lock Screen widget and Dynamic Island presentation (compact and expanded layouts) for compatible devices.
-- **Fixed Milestone Notifications:** Local reminders scheduled at predefined milestones (30 days, 7 days, 1 day, 1 hour, and launch moment) defined in `ReleaseConfig.Milestone`.
+- **Local reminders at fixed milestones:** Scheduled at predefined thresholds (30 days, 7 days, 1 day, 1 hour, and launch moment) defined in `ReleaseConfig.Milestone`.
 - **Foreground & Permission Handling:** In-app notification presentation banner when active, with a direct shortcut to iOS Settings if notification permissions are denied.
 - **Zero-Server Operation:** Operates independently from backend services; all state, timers, and scheduled notifications reside strictly on-device.
 
@@ -36,15 +36,15 @@
 Most countdown applications rely on remote push notifications, background workers, or App Groups to sync widgets with an app. This project deliberately avoids those dependencies to comply with on-device signing constraints (**Decision D-001**):
 
 1. **Native System Timers (`Text(timerInterval:countsDown:)`):**
-   Rather than running active background timer threads or continuous app loops, the UI uses SwiftUI's `Text(timerInterval:countsDown:)`. This delegates time rendering directly to the system view hierarchy.
+   The system updates the countdown text automatically, without timer threads or active background app processes.
 2. **Local ActivityKit (`pushType: nil`):**
    The Live Activity is requested locally by the application using `Activity.request(attributes:content:pushType: nil)`. It requires no Apple Push Notification service (APNs) keys or remote server tokens.
 3. **Local Notifications (`UserNotifications`):**
    Milestone alerts are scheduled directly with the system `UNUserNotificationCenter` using `UNTimeIntervalNotificationTrigger` calculated against the release timestamp.
 4. **Single Source of Truth (`ReleaseConfig.swift`):**
    The target date and milestone thresholds reside in a shared configuration file included across all build targets.
-5. **Signing Compatibility:**
-   By deliberately avoiding remote push capabilities and App Groups, the application minimizes specialized provisioning profile requirements that can be problematic with third-party on-device signing tools (e.g., GBox, ESign).
+5. **Signing Compatibility (Decision D-001):**
+   Third-party on-device signers typically do not carry push notification or App Group capabilities. The app deliberately avoids these capabilities to reduce signing friction, though installation and widget extension loading remain subject to physical device testing.
 
 ---
 
@@ -88,7 +88,7 @@ The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos
 1. Open the [Actions tab](https://github.com/luandaviap/countdown-vi/actions/workflows/build-ios.yml) and select the latest successful run.
 2. Scroll to the **Artifacts** section at the bottom and download `CountdownVI-unsigned-build-N.zip`.
 3. Unzip the file to obtain `CountdownVI-unsigned.ipa`.
-4. Import the `.ipa` into your signing utility on iOS (e.g., GBox, ESign, Feather, or AltStore/Sideloadly on PC).
+4. Import the `.ipa` into your signing utility on iOS (e.g., GBox, ESign, Feather, or AltStore/Sideloadly on PC as examples).
 5. Sign and install with your certificate.
 
 > [!IMPORTANT]
@@ -103,21 +103,21 @@ The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos
 - **Provisional Launch Date:**
   The current date in `ReleaseConfig` (`2026-11-19T00:00:00-05:00`, `isDateVerified = false`) is an unverified placeholder (**Decision D-004**). The UI clearly labels the countdown as provisional until officially confirmed.
 - **Validation Scope:**
-  All code compiles cleanly on GitHub Actions under iOS 17.0+ deployment target. Final hardware behaviors (Dynamic Island padding, vibration/sound triggers, extension loading) require on-device confirmation.
+  Compiles in GitHub Actions (macOS runner), deployment target iOS 17.0. Hardware-specific behaviors (Dynamic Island layout fitting, notification delivery, widget extension loading) require validation on a physical device.
 
 ---
 
 ## Screenshots
 
 > **Screenshots coming soon.**  
-> Real device captures (Lock Screen, Dynamic Island compact/expanded, and main view) will be added here once validated on physical hardware.
+> Real device screenshots will be added after on-device validation.
 
 ---
 
 ## Roadmap
 
 - [x] Phase 0: Repository setup, XcodeGen spec, CI workflow generating unsigned IPA.
-- [x] Phase 1: Real-time countdown UI, local Live Activity, local milestone notifications.
+- [x] Phase 1: MVP App (implemented; compiles in CI: real-time countdown, local Live Activity, local milestone notifications).
 - [ ] Phase 1.5: Hardware verification on physical iPhone via GBox/ESign.
 - [ ] Phase 2 (Optional): Lightweight Cloudflare Worker in `backend/` to serve verified release dates dynamically without requiring new app builds.
 
