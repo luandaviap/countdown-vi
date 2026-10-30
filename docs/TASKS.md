@@ -17,6 +17,7 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 | T-008 | Identidade visual: wordmark, ícone 1024x1024, banner e paleta em `assets/` (D-009) | arte (Matiz) | done |
 | T-009 | Mockup fiel do app como estava (v1, preto e branco) em `assets/mockups/` | arte (Matiz) | done (commit `ffcea7d`, local) |
 | T-015 | README: corrigir o texto do timer (linha 38) e checar actions em Node 24 (`checkout@v4`, `upload-artifact@v4`) | devops (Trilho, Sonnet 5.5) | done (`6bd0b4b`; conferi: as 3 actions na última versão e em Node 24, README correto, run `41091728283` verde; o passo de release só roda em tag e nunca foi exercitado) |
+| T-028 | Guia de assinatura no README: a extensão precisa de perfil próprio (perfil curinga ou Sideloadly), com a ressalva de que a confirmação em aparelho está pendente (D-017) | devops (Trilho) | todo (depois da confirmação do usuário) |
 
 ## Fase 1: App (MVP)
 | ID | Tarefa | Agente | Status |
@@ -51,6 +52,9 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 - Relato do usuário (build 15, instalação limpa): só aparece "Avisar nos marcos"; "Atividades ao vivo" está ligada em Ajustes. Conclusão: o app provavelmente cria a activity (o botão "Ativar" some) mas a extensão não renderiza, o que também explica o widget não aparecer. Causa ainda desconhecida; o Prisma subiu o diagnóstico (`7f8a8c1`) e uma correção de decodificação (`9ff2007`), com o CI na fila (run `41098428837`). Bisseção pedida: instalar o build 13 (e o 10) e relatar.
 
 - T-027 (Prisma, handoff recebido): build 16 (run `41098428837`, `9ff2007`, verde) com linha de diagnóstico temporária na home (`DiagnosticsInfo.swift`, `TODO(remover-diagnostico)`) e correção `9ff2007` (`ContentState.days` agora opcional). Hipóteses do Prisma: H1 (média) activity de build antigo ilegível pela extensão nova, não explica o widget; H2 (baixa-média) a extensão inteira não carrega no aparelho (assinatura/perfil da extensão no assinador, bundle ID da extensão não acompanhando o do app, ou iOS sem reindexar widgets). Nenhum defeito estático encontrado que derrube a extensão. Próximo passo: print da linha do build 16 e o teste do build 10 pelo usuário. Remover a linha de diagnóstico depois.
+
+- **Causa identificada (print do build 16, D-017):** a extensão está assinada mas sem perfil de provisionamento (`perfil não`); o app tem perfil e criou a activity (`1 active`, sem erro). Sem perfil, o iOS não carrega a extensão, então não há widget nem desenho da Live Activity. Não é bug de código. Caminhos: certificado/perfil curinga no GBox/ESign, ou Sideloadly com Apple ID no Windows. Aguardando o usuário dizer qual assinador/certificado usa e se o build 10 foi assinado de outro jeito. A linha de diagnóstico sai depois da confirmação.
+- Primeiro print real do app no aparelho (build 16): a home do design v2 renderiza como no mockup (fundo, blocos de vidro, barra, textos). O print tem a linha de diagnóstico; pedir outro sem ela para o README.
 
 ## Pendências com o usuário
 - [ ] Data oficial e fuso: seguem provisórios (2026-11-19 00:00 EST, NÃO verificado; `isDateVerified = false`; a tela mostra "Data provisória"). O usuário decidiu deixar assim por enquanto, e depois quer um servidor que entregue a data/hora conforme a região da pessoa (T-020/T-021). Só mudar com confirmação explícita.

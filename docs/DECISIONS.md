@@ -83,6 +83,12 @@
 **Porquê:** sem push (D-001), nada reescreve um valor fixo em segundo plano; `staleDate` garante que o fixo nunca fique errado. A vida da activity (~8h, D-006) limita o pior caso a uma virada.
 **Risco:** o formato do texto relativo (idioma, unidades, arredondamento) só se vê no aparelho; se não servir, remover o experimento.
 
+## D-017: A Widget Extension precisa de perfil de provisionamento próprio; causa da falha no build 16 (2026-10-30)
+**Contexto:** no build 15/16, instalado limpo, nem a Live Activity nem o widget apareciam. A linha de diagnóstico (T-027) mostrou: app `assinatura sim, perfil sim`; extensão `com.countdownvi.app.widget [prefixo ok, assinatura sim, perfil não]`; `Live Activities permitidas: sim`, `1 active`, `último erro: nenhum`.
+**Decisão:** tratar como problema de assinatura, não de código: o app cria a Live Activity, mas o iOS não carrega uma extensão sem `embedded.mobileprovision` próprio, então nada desenha a activity nem lista o widget. O assinador precisa assinar a extensão com um perfil que cubra `com.countdownvi.app.widget`: perfil curinga (App ID terminando em `*`) ou perfis separados (ex.: Sideloadly com Apple ID, que cria os dois).
+**Porquê:** é o risco que a D-001 já registrava ("a Widget Extension precisa ser assinada junto com o app; se o fluxo de assinatura não suportar extensões, reavaliar"). O código e o empacotamento são idênticos aos do build 10 (arquivos, Info.plist, arquitetura), e o app não reporta erro.
+**Pendente:** confirmar com o usuário qual assinador e tipo de certificado usa, e se o build 10 foi assinado de outro jeito. A certeza é alta, mas só se confirma quando o widget aparecer com um perfil curinga ou com o Sideloadly. O README e o guia de instalação (T-004) devem dizer que o perfil precisa ser curinga. Sem extensão assinada, o app abre e conta normalmente, mas sem Live Activity nem widget. A linha de diagnóstico sai depois da confirmação.
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
