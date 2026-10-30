@@ -18,6 +18,8 @@ struct CountdownView: View {
     @State private var notificationStatus: UNAuthorizationStatus?
     /// Starts hidden so the button does not flash before the first sync.
     @State private var canStartLiveActivity = false
+    // TODO(remover-diagnostico): T-027 on-device diagnostics line.
+    @State private var diagnostics = ""
 
     @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 36
     @ScaledMetric(relativeTo: .caption2) private var unitSize: CGFloat = 10
@@ -40,6 +42,7 @@ struct CountdownView: View {
             guard scenePhase == .active else { return }
             await LiveActivityController.sync()
             canStartLiveActivity = LiveActivityController.canStartActivity
+            diagnostics = DiagnosticsInfo.summary()
             notificationStatus = await NotificationScheduler.authorizationStatus()
         }
     }
@@ -86,6 +89,16 @@ struct CountdownView: View {
             VStack(spacing: 16) {
                 progressBar(remainingSeconds: timeLeft.totalSeconds)
                 releaseInfo
+            }
+
+            // TODO(remover-diagnostico): T-027, the user screenshots this for the orchestrator.
+            if !diagnostics.isEmpty {
+                Text(verbatim: diagnostics)
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundStyle(Theme.Palette.textSecondary)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
             }
         }
         .shadow(color: Theme.Palette.night.opacity(0.35), radius: 6, y: 1)
@@ -233,6 +246,7 @@ struct CountdownView: View {
             Task {
                 await LiveActivityController.sync()
                 canStartLiveActivity = LiveActivityController.canStartActivity
+                diagnostics = DiagnosticsInfo.summary()
             }
         } label: {
             Text(AppCopy.startLiveActivity)

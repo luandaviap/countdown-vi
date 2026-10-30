@@ -7,6 +7,12 @@ import OSLog
 enum LiveActivityController {
     private static let logger = Logger(subsystem: "com.countdownvi.app", category: "LiveActivity")
 
+    // TODO(remover-diagnostico): surfaced on the home screen for on-device debugging (T-027).
+    /// Full text of the last Activity.request failure, if any (kept until the app is relaunched).
+    private(set) static var lastError: String?
+    /// What the last sync did: "request ok", "update", "pulado: ...", "request falhou".
+    private(set) static var lastAction = "nenhuma"
+
     /// Whether the "Ativar Live Activity" button can help: activities allowed and none running.
     static var canStartActivity: Bool {
         ActivityAuthorizationInfo().areActivitiesEnabled
@@ -27,6 +33,7 @@ enum LiveActivityController {
             for activity in running {
                 await activity.end(nil, dismissalPolicy: .immediate)
             }
+            lastAction = "encerrada: após a data"
             return
         }
 
@@ -41,23 +48,28 @@ enum LiveActivityController {
             }
             // Always refresh: even with the same state, the staleDate moves forward.
             await current.update(content)
+            lastAction = "update (\(current.activityState))"
             return
         }
 
         guard ActivityAuthorizationInfo().areActivitiesEnabled else {
             logger.info("Live Activities disabled by the user; skipping request")
+            lastAction = "pulado: Live Activities desativadas"
             return
         }
 
         do {
-            _ = try Activity.request(
+            let activity = try Activity.request(
                 attributes: CountdownActivityAttributes(title: ReleaseConfig.gameTitle),
                 content: content,
                 pushType: nil
             )
+            lastAction = "request ok (\(activity.activityState))"
         } catch {
             // The app keeps working without the activity (e.g. system limit reached).
             logger.error("Live Activity request failed: \(error.localizedDescription, privacy: .public)")
+            lastAction = "request falhou"
+            lastError = "\(error.localizedDescription) | \(String(reflecting: error))"
         }
     }
 }
