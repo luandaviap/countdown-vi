@@ -44,6 +44,11 @@
 **Regras:** imagem gerada nunca é passada como screenshot real (prefixos `concept-`/`mockup-`; screenshots reais só do usuário); sem logotipo, arte ou marca oficial da Rockstar/GTA (repo público, arte original); sem data de lançamento como fato em imagem (D-004).
 **Nota:** o modelo foi escolhido no menu do Codex como "GPT-6.1 Terra", a opção mais próxima do "GPT 6 Terra" pedido; trocar com `/model` se o usuário preferir outro.
 
+## D-010: A tela do app recalcula a cada segundo; só a Live Activity usa `Text(timerInterval:)` (2026-10-30)
+**Decisão:** na tela principal, dias e relógio saem do mesmo total de segundos inteiros, atualizado por `TimelineView(.periodic(by: 1))` ancorado a segundos inteiros antes de `releaseDate`. A Live Activity continua com `Text(timerInterval:)`.
+**Porquê:** garante que o relógio vá de 00:00:00 a 23:59:59 (nunca 24:00:00) e que dias e relógio nunca divirjam, sem depender de como `Text(timerInterval:)` arredonda (não dá para conferir sem aparelho). Na Live Activity, `Text(timerInterval:)` é obrigatório: é o que o sistema atualiza sem o app (D-001).
+**Custo:** 1 render por segundo, só com o app em primeiro plano. Sem servidor, sem push. D-001 intacta.
+
 ## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
 **Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
 **Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.

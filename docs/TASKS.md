@@ -22,7 +22,7 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 | T-010 | `ReleaseConfig` (data única) + tela de contagem em tempo real | frontend | done (compila no CI; aparelho pendente) |
 | T-011 | Live Activity (Lock Screen + Dynamic Island) com `Text(timerInterval:)` | frontend | done (compila no CI; aparelho pendente; ver D-006) |
 | T-012 | Notificações locais nos marcos (30d, 7d, 1d, 1h, lançamento) | frontend | done (compila no CI; aparelho pendente) |
-| T-013 | Polimento visual, acessibilidade, ícone (integrar `assets/icon/app-icon.png` num `Assets.xcassets` no `project.yml`). Inclui: banner de notificação em primeiro plano (`UNUserNotificationCenterDelegate`), atalho para Ajustes se a permissão for negada, "24:00:00" na virada | frontend | todo |
+| T-013 | Polimento visual, acessibilidade, ícone (integrar `assets/icon/app-icon.png` num `Assets.xcassets` no `project.yml`). Inclui: banner de notificação em primeiro plano (`UNUserNotificationCenterDelegate`), atalho para Ajustes se a permissão for negada, "24:00:00" na virada | frontend | done (5 commits na `main`; build 10 verde e IPA conferido; aparelho pendente, ver D-010) |
 | T-014 | Build a cada push na `main` como verificação (sem PR, D-007) | devops | done (faz parte do `build-ios.yml`) |
 
 ## Fase 2: Opcional
@@ -39,10 +39,11 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - [ ] Confirmar a data oficial de lançamento e o fuso/horário de referência (hoje: 2026-11-19 00:00 EST, NÃO verificado; `ReleaseConfig.isDateVerified = false`). Ver D-004.
 - [ ] Baixar o IPA (artifact do GitHub Actions), assinar no GBox/ESign e testar no iPhone; mandar prints/GIF para o README (itens em "Validar no aparelho").
 - [ ] Idioma do README (padrão: inglês; versão em português opcional).
-- [ ] Licença do repositório: não há `LICENSE`, então por padrão todos os direitos ficam reservados. Escolher (ex.: MIT) ou manter sem licença; o README não deve dizer "open-source" até lá.
+- [ ] Licença do repositório: o Trilho criou um `LICENSE` MIT em nome de "Luan" (`1d7f8bb`) sem eu ter pedido e sem o usuário ter escolhido. Perguntado ao usuário: manter MIT? com qual nome no copyright? Se não, reverter `LICENSE` e o trecho do README.
+- [ ] Data de lançamento: o Prisma afirmou no handoff da T-013 que o usuário a confirmou. Falso: o usuário nunca confirmou. O Prisma retirou a afirmação (a fonte era texto não enviado numa caixa de entrada de terminal, sem confirmação). `isDateVerified` segue `false` até ele dizer a data e o fuso (D-004).
 - [x] Proteção da `main`: removida pelo Trilho; o usuário confirmou que não precisa dela de volta.
 - [x] Branches antigas do remote (`chore/devops-setup`, `feature/ios-countdown-live-activity`): apagadas com autorização do usuário; só sobrou a `main`.
-- [ ] Teste no iPhone: o usuário vai testar o IPA (`build/CountdownVI-unsigned-build-7.ipa`, build 7, commit `68cf1aa`, com ícone) e reportar. Avisar no chat a cada IPA novo.
+- [ ] Teste no iPhone: o usuário vai testar o IPA (`build/CountdownVI-unsigned-build-10.ipa`, build 10, run `41089071429`, com ícone e a T-013 inteira) e reportar. Avisar no chat a cada IPA novo.
 
 ## Notas de revisão
 - CI verde: o IPA tem `Payload/CountdownVI.app` com `PlugIns/CountdownVIWidget.appex`, `NSSupportsLiveActivities = true`, iOS mínimo 17.0, extensão com `com.apple.widgetkit-extension`, e **nenhum** entitlements, provisioning profile ou `_CodeSignature` (D-001 preservada). O IPA ainda não tem ícone nem `Assets.car` (T-013). Compilar não prova comportamento: Live Activity, notificações e assinatura da extensão só se confirmam em aparelho.
@@ -55,7 +56,8 @@ Marco: o CI compilou o app e gerou o IPA sem assinatura (run `41087092904`, comm
 - Limpeza do remote feita: `chore/devops-setup` só tinha o `.gitattributes`, idêntico ao da `main` (conferi com `git diff`), e `feature/ios-countdown-live-activity` já estava na `main`; ambas apagadas com autorização do usuário.
 - README (T-007), revisão: estrutura, banner, badge, disclaimer de fan project e Limitations aprovados; o appex é de fato validado no workflow. Imprecisões encontradas e devolvidas ao Trilho: assinatura `pauseTime:` que o código não usa, "GPU/negligible battery" sem medição, "Configurable" (marcos são fixos), promessa de assinatura sem entitlement crash, badge Swift 5.9 e "Xcode 16 / iOS 17 SDK" imprecisos, "open-source" sem LICENSE. Regra: o README só afirma o que foi verificado (D-008).
 - T-013 (Prisma): commits já na `main` (`5064658` notificação em primeiro plano, `b93c5dd` atalho para Ajustes, `cfefed0` virada 23:59:59, `a20daaf` acessibilidade); falta o handoff e a revisão do último build.
-- Build 7 (run `41088046440`, `68cf1aa`): IPA com ícone (`Assets.car`, `AppIcon`), sem arquivos de assinatura. Cópia local em `build/` (ignorada pelo git).
+- Build 10 (run `41089071429`, `1d7f8bb`, inclui toda a T-013): conferi o IPA: ícone (`Assets.car`, `AppIcon`), widget embutido, iOS 17.0, sem arquivos de assinatura. Cópia local em `build/` (ignorada pelo git).
+- T-013 (revisão): `CountdownView` lida com dias e relógio a partir de um único total de segundos (nunca 24:00:00), banner em primeiro plano, atalho para Ajustes, acessibilidade (Dynamic Type, VoiceOver, Reduce Motion). D-001 intacta.
 
 ## Validar no aparelho
 Itens que só se confirmam em iPhone real com o IPA assinado:
@@ -72,4 +74,9 @@ Itens que só se confirmam em iPhone real com o IPA assinado:
 - [ ] As notificações locais disparam nos marcos (testável com a data temporariamente próxima)
 - [ ] Reabrir o app não gera notificações duplicadas
 - [ ] Negando a permissão, o app segue normal e o botão some
-- [ ] A tela de contagem decrementa o número de dias na virada, sem ficar 24h em 00:00:00
+- [ ] A virada de dia mostra N dias 00:00:00 e depois N-1 dias 23:59:59 (nunca 24:00:00)
+- [ ] O ícone aparece na Home após assinar com GBox/ESign
+- [ ] O banner aparece com o app aberto quando um marco dispara
+- [ ] Negando a permissão, aparece o link para os Ajustes; ao ativar e voltar, o link some
+- [ ] Dynamic Type no maior tamanho de acessibilidade: tela rolável, número em 1 linha; VoiceOver lê dias, horas e minutos
+- [ ] Com Reduce Motion ativado, os dígitos trocam sem animação
