@@ -30,18 +30,17 @@ enum LiveActivityController {
             return
         }
 
-        let content = ActivityContent(
-            state: CountdownActivityAttributes.ContentState(releaseDate: releaseDate),
-            staleDate: releaseDate
-        )
+        // The fixed day count is only valid until the next day boundary; marking the content stale
+        // there makes the views drop the label instead of showing a wrong day (D-016).
+        let state = CountdownActivityAttributes.ContentState(releaseDate: releaseDate, now: now)
+        let content = ActivityContent(state: state, staleDate: state.nextDayBoundary)
 
         if let current = running.first {
             for duplicate in running.dropFirst() {
                 await duplicate.end(nil, dismissalPolicy: .immediate)
             }
-            if current.content.state != content.state {
-                await current.update(content)
-            }
+            // Always refresh: even with the same state, the staleDate moves forward.
+            await current.update(content)
             return
         }
 
