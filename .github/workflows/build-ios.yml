@@ -24,17 +24,15 @@ jobs:
 
       - name: Select Xcode Version
         run: |
-          # Pinned to Xcode 16.2 (iphoneos18.2 SDK), as in every build so far.
-          # Never fall back to Xcode 26.x: it would switch to the iOS 26 SDK.
+          # Pinned to Xcode 16.4 (iphoneos18.5 SDK), the newest 16.x on macos-15.
+          # Xcode 16.2 is installed but its asset catalog compile (actool) fails
+          # there: no iOS 18.2 simulator runtime on the image.
+          # Never use Xcode 26.x: it would switch to the iOS 26 SDK.
           echo "Available Xcode installations:"
           ls -d /Applications/Xcode*.app
-          XCODE_APP=/Applications/Xcode_16.2.app
+          XCODE_APP=/Applications/Xcode_16.4.app
           if [ ! -d "$XCODE_APP" ]; then
-            XCODE_APP=$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -n 1)
-            echo "Xcode 16.2 not installed, falling back to: $XCODE_APP"
-          fi
-          if [ -z "$XCODE_APP" ]; then
-            echo "Error: no Xcode 16.x installed"
+            echo "Error: $XCODE_APP not installed on this runner image"
             exit 1
           fi
           echo "Selecting: $XCODE_APP"
