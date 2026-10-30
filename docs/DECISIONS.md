@@ -23,3 +23,9 @@
 **Decisão:** `ios/project.yml` é a fonte; `ios/*.xcodeproj` e os `Info.plist` gerados (`ios/CountdownVI/Info.plist`, `ios/CountdownVIWidget/Info.plist`) vão para o `.gitignore`. O CI roda `xcodegen generate` antes do `xcodebuild`.
 **Porquê:** evita diffs ruidosos e conflitos em arquivos gerados; sem Mac local, o CI é quem sempre gera o projeto.
 **Risco:** sem Xcode no Windows, erros do `project.yml` só aparecem no CI. Reavaliar se isso atrapalhar.
+
+## D-006: Live Activity expira em ~8h; limitação aceita (2026-10-30)
+**Contexto:** o iOS encerra uma Live Activity após cerca de 8h ativa (ela pode ficar até ~4h a mais na Lock Screen), e `Activity.request` só funciona com o app em primeiro plano. Sem push remoto (D-001), nada reinicia a activity em segundo plano.
+**Decisão:** o app inicia a activity ao ficar ativo (`LiveActivityController.sync()`, idempotente) e ela volta quando o usuário reabre o app. Não tentamos contornar o limite. As notificações locais (T-012) cobrem os marcos.
+**Porquê:** contornar exigiria push (APNs) ou capabilities que a assinatura de terceiros não carrega, o que quebra a D-001.
+**Consequência:** a Live Activity não conta por semanas sozinha. Para exibição contínua, existe a proposta do widget comum (ver "Propostas" em `docs/TASKS.md`), que depende do usuário.
