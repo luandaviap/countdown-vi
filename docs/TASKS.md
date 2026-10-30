@@ -50,6 +50,8 @@ Marco: o CI compila o app e gera o IPA sem assinatura. O usuário instalou o IPA
 
 - Relato do usuário (build 15, instalação limpa): só aparece "Avisar nos marcos"; "Atividades ao vivo" está ligada em Ajustes. Conclusão: o app provavelmente cria a activity (o botão "Ativar" some) mas a extensão não renderiza, o que também explica o widget não aparecer. Causa ainda desconhecida; o Prisma subiu o diagnóstico (`7f8a8c1`) e uma correção de decodificação (`9ff2007`), com o CI na fila (run `41098428837`). Bisseção pedida: instalar o build 13 (e o 10) e relatar.
 
+- T-027 (Prisma, handoff recebido): build 16 (run `41098428837`, `9ff2007`, verde) com linha de diagnóstico temporária na home (`DiagnosticsInfo.swift`, `TODO(remover-diagnostico)`) e correção `9ff2007` (`ContentState.days` agora opcional). Hipóteses do Prisma: H1 (média) activity de build antigo ilegível pela extensão nova, não explica o widget; H2 (baixa-média) a extensão inteira não carrega no aparelho (assinatura/perfil da extensão no assinador, bundle ID da extensão não acompanhando o do app, ou iOS sem reindexar widgets). Nenhum defeito estático encontrado que derrube a extensão. Próximo passo: print da linha do build 16 e o teste do build 10 pelo usuário. Remover a linha de diagnóstico depois.
+
 ## Pendências com o usuário
 - [ ] Data oficial e fuso: seguem provisórios (2026-11-19 00:00 EST, NÃO verificado; `isDateVerified = false`; a tela mostra "Data provisória"). O usuário decidiu deixar assim por enquanto, e depois quer um servidor que entregue a data/hora conforme a região da pessoa (T-020/T-021). Só mudar com confirmação explícita.
 - [x] Direção de design v2, fundo gerado por IA e as 3 propostas: aprovados (leitura minha de "Decisão aprovada"; o usuário pode corrigir). Ver D-015.
