@@ -1,8 +1,9 @@
 import SwiftUI
 import WidgetKit
 
-/// Temporary T-027c probe: a standard widget and Live Activity in the same extension.
+/// Temporary T-027c probe: a standard widget isolated from the Live Activity extension.
 /// No countdown, release-date logic, network, shared storage, or preview macros.
+@main
 struct CountdownProbeWidget: Widget {
     // Preserve the original widget kind so this experiment does not also change its identity.
     let kind = "CountdownWidget"

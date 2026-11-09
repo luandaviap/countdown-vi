@@ -35,6 +35,8 @@ targets:
     dependencies:
       - target: CountdownVIWidget
         embed: true
+      - target: CountdownVIHomeWidget
+        embed: true
     info:
       path: CountdownVI/Info.plist
       properties:
@@ -72,12 +74,35 @@ targets:
         PRODUCT_NAME: CountdownVIWidget
         SKIP_INSTALL: "YES"
 
+  # T-027c: isolate the static Home Screen probe from the working Live Activity extension.
+  # No push, App Groups, or entitlements; signing still happens on device (D-001).
+  CountdownVIHomeWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CountdownVIHomeWidget
+      - path: Shared/ReleaseConfig.swift
+    info:
+      path: CountdownVIHomeWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Countdown VI Test Widget
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.countdownvi.app.homewidget
+        PRODUCT_NAME: CountdownVIHomeWidget
+        SKIP_INSTALL: "YES"
+
 schemes:
   CountdownVI:
     build:
       targets:
         CountdownVI: all
         CountdownVIWidget: all
+        CountdownVIHomeWidget: all
     run:
       config: Debug
     archive:
