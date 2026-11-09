@@ -1,0 +1,43 @@
+{
+  "tool": "image_gen.imagegen",
+  "model": "Not disclosed by the built-in tool",
+  "date": "2026-11-09",
+  "assets": [
+    {
+      "file": "concept-banner.png",
+      "size": [
+        1600,
+        600
+      ],
+      "prompt": "Use case: ads-marketing. Create an original premium GitHub README cover for Countdown VI, an iPhone portfolio app counting down to GTA 6. Wide 1600x600 pixel canvas, exact 8:3 aspect ratio. Full bleed art, not a photo of a banner. Art direction: cinematic graphic illustration of a tropical coastal city at sunset, deep purple #24104C fading through magenta #ED286B into orange #FF8A4C, a pale golden sun low at the horizon, dark palm silhouettes and geometric skyline, reflective water, subtle fine grain. Restrained, beautifully composed, clean silhouettes. Left half: big beautifully typeset cream heavy rounded sans text EXACTLY \"COUNTDOWN VI\", split over two lines, smaller text \"Every second brings us closer.\" and small bottom text \"SWIFTUI / LIVE ACTIVITY / LOCAL REMINDERS\". Right half: a single elegant straight-on dark titanium iPhone, entirely visible with ample padding, screen uses this same sunset art, small title \"Esperando por Leonida\", four translucent glass countdown blocks with \"19\" \"12\" \"22\" \"41\" and labels \"DIAS\" \"HORAS\" \"MIN\" \"SEG\", a tiny \"Data provisória\" label, no specific release date, bottom pill \"Ativar Live Activity\". Timer is an illustrative frozen example. Phone content sharp and readable, no clutter. No official GTA or Rockstar logo, no characters, no official game imagery, no Apple logo, no watermarks. Do not invent additional features. Small discreet label \"VISUAL CONCEPT\" bottom right. Keep all text and phone within a generous safe margin. Produce only this one horizontal banner.",
+      "use": "README cover"
+    },
+    {
+      "file": "mockup-countdown.png",
+      "size": [
+        1600,
+        1000
+      ],
+      "prompt": "Use case: ui-mockup. Create one premium horizontal 1600x1000 visual concept image for the Countdown VI iPhone app README. Exact 8:5 landscape canvas. Same original visual identity: dark purple #24104C, magenta #ED286B, orange #FF8A4C, cream text, tropical sunset skyline, palm silhouettes and water. Elegant editorial presentation on nearly black purple studio background, subtle pink rim light, extremely restrained. A single large straight-on modern dark titanium iPhone centered right, entirely visible with generous margins. Screen design based on actual SwiftUI app: clean purple upper sky, title \"Esperando por Leonida\", subtitle \"Dias para viajar para Leonida\", four same-size translucent rounded glass cards in one row with values \"19\" \"12\" \"22\" \"41\" and labels \"DIAS\" \"HORAS\" \"MIN\" \"SEG\". Beneath cards a fine pink-orange progress bar filled about one-third, small readable label \"Data provisória\". Lower half screen: beautiful original sunset illustration, yellow sun, palms, city silhouettes, water, no people. Two bottom buttons over dark water scrim, upper pink-orange pill \"Ativar Live Activity\", lower dark pill \"Notificar marcos\". No absolute release date anywhere. Left side spacious editorial typography, exact heading \"The wait, beautifully counted.\" in large cream rounded bold type, small eyebrow \"01 / COUNTDOWN\", short line \"Days. Hours. Minutes. Seconds.\" at bottom left. Tiny \"VISUAL CONCEPT / NOT A SCREENSHOT\" footer. Screen proportions credible and content readable. No official third-party logos, no Rockstar or GTA artwork, no Apple logo, no claims of actual screenshot. One single image, not a mood board.",
+      "use": "Main-screen visual concept"
+    },
+    {
+      "file": "mockup-live-activity.png",
+      "size": [
+        1600,
+        1000
+      ],
+      "prompt": "Use case: ui-mockup. Create one premium landscape 1600x1000 (8:5) GitHub README illustration for Countdown VI, showcasing local iPhone Live Activity. Deep near-black purple studio backdrop, cream typography, refined magenta/orange accents, tropical sunset illustration on a straight-on dark titanium iPhone placed on the left, full phone visible within generous margins. Screen wallpaper: original purple-magenta-orange sky, golden setting sun, dark palms, geometric coastal skyline, water. Standard lock screen time \"9:41\", no calendar date, and in its lower half a restrained black translucent Live Activity panel with exact title \"Esperando por Leonida\", small \"Data provisória\", fixed \"19 dias\", large monospaced timer \"468:22:41\". Right side an elegant editorial breakdown with eyebrow \"02 / LIVE ACTIVITY\", large cream heading \"A glance is enough.\" and two floating black pill UI representations of Dynamic Island, stacked with ample space: compact pill with orange sunset glyph on left, camera dot central and \"19d\" right; expanded rounded black island with title \"Esperando por Leonida\", \"19 dias\" and timer \"468:22:41\". Small clear labels \"LOCK SCREEN\", \"COMPACT\", \"EXPANDED\" next to relevant items. Add tiny footer \"LOCAL ACTIVITYKIT / NO REMOTE PUSH\" and \"VISUAL CONCEPT / NOT A SCREENSHOT\". Crisp plausible iOS UI, keep all illustrated values consistent: 19 days plus 12:22:41 equals 468:22:41 total hours. These are static example states. No widgets, no account, no clouds, no Apple logo, no official GTA/Rockstar imagery or marks, no absolute launch date. Visual identity consistent with purple sunset, clean glass surfaces, heavy rounded typography. Output one single polished image.",
+      "use": "Lock Screen and Dynamic Island visual concept"
+    },
+    {
+      "file": "concept-milestones.png",
+      "size": [
+        1600,
+        800
+      ],
+      "prompt": "Use case: infographic-diagram. Create an original premium 1600x800 horizontal GitHub README illustration for Countdown VI local notification milestones. Exact 2:1 aspect ratio. Same elegant visual family: deep purple #24104C to near-black background, cream text, accents pink #FF4B9E and orange #FF814A, original thin tropical palm silhouettes in lower corners, tiny golden sun over a subtle water horizon at bottom. Editorial airy composition, no phone, no screenshot imitation. Eyebrow upper left \"03 / LOCAL REMINDERS\". Large rounded heavy cream title \"Five milestones. One destination.\" Upper right small discreet bell outline in pink/orange. Center/lower half a beautiful horizontal timeline with exactly FIVE large equally spaced circular nodes linked by a fine pink-to-orange line, left to right labels EXACTLY \"30 DAYS\", \"7 DAYS\", \"1 DAY\", \"1 HOUR\", \"LAUNCH\". Above each node a very large corresponding number or symbol: \"30\", \"7\", \"1\", \"1\", and a simple sunrise glyph for launch. Each label on one line, comfortably readable. No extra timeline nodes. Beneath timeline a short caption \"Scheduled on your iPhone. No server required.\" and small text \"Notification permission required.\" Footer \"VISUAL CONCEPT / PROVISIONAL TARGET DATE\". No absolute date, no notification delivery guarantee, no invented features, no cloud/server icons, no official GTA or Rockstar marks, no Apple logo, no people, no watermark. Precise typography, restrained texture and beautiful negative space. One full bleed illustration only.",
+      "use": "Local notification milestones"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/readme/banner.png" alt="Countdown VI Banner" width="100%">
+  <img src="assets/readme/concept-banner.png" alt="Countdown VI visual concept: tropical sunset, coastal skyline and an illustrated iPhone countdown" width="800" height="300">
 </p>
 
 <p align="center">
@@ -15,9 +15,29 @@
 </p>
 
 <p align="center">
-  <strong>Countdown VI</strong> is an iOS portfolio project featuring a real-time countdown with Lock Screen and Dynamic Island Live Activities.<br>
+  <strong>Countdown VI</strong> is an iOS portfolio project counting down to GTA VI, with Lock Screen and Dynamic Island Live Activities.<br>
   Built with SwiftUI, ActivityKit, and WidgetKit, designed to build in CI and run fully offline without a backend server.
 </p>
+
+---
+
+## Visual Concepts
+
+Original AI-generated illustrations inspired by the project's sunset palette, glass countdown blocks, and local iOS features. These are **visual concepts, not screenshots or pixel-accurate previews**. UI details, system layouts, and wording may differ from the running app. Example countdowns are frozen; the configured target date remains provisional and unverified.
+
+<p align="center">
+  <img src="assets/readme/mockup-countdown.png" alt="AI-generated main-screen concept with four glass blocks showing 19 days, 12 hours, 22 minutes and 41 seconds above a tropical sunset" width="800" height="500">
+</p>
+
+*Main-screen concept — rounded typography, four countdown units, progress, and local controls.*
+
+<p align="center">
+  <img src="assets/readme/mockup-live-activity.png" alt="AI-generated Lock Screen and compact and expanded Dynamic Island concepts, showing 19 days and a total-hours timer of 468:22:41" width="800" height="500">
+</p>
+
+*Live Activity concept — the same example interval shown as 19 days plus 12:22:41 in-app and 468:22:41 total hours in the system timer. Availability and layout require device validation.*
+
+Generation prompts, dimensions, and provenance are documented in [`assets/readme/README.md`](assets/readme/README.md).
 
 ---
 
@@ -28,6 +48,12 @@
 - **Local reminders at fixed milestones:** Scheduled at predefined thresholds (30 days, 7 days, 1 day, 1 hour, and launch moment) defined in `ReleaseConfig.Milestone`.
 - **Foreground & Permission Handling:** In-app notification presentation banner when active, with a direct shortcut to iOS Settings if notification permissions are denied.
 - **Zero-Server Operation:** Operates independently from backend services; all state, timers, and scheduled notifications reside strictly on-device.
+
+<p align="center">
+  <img src="assets/readme/concept-milestones.png" alt="Illustrated local reminder timeline: 30 days, 7 days, 1 day, 1 hour, and launch; notification permission required" width="800" height="400">
+</p>
+
+*Milestone illustration — local reminders use the provisional target in `ReleaseConfig` and require notification permission.*
 
 ---
 
@@ -111,7 +137,7 @@ The [`build-ios.yml`](.github/workflows/build-ios.yml) workflow runs on a `macos
 ## Screenshots
 
 > **Screenshots coming soon.**  
-> Real device screenshots will be added after on-device validation.
+> The images above are AI-generated visual concepts. Real device screenshots will be added after on-device validation.
 
 ---
 
